@@ -39,4 +39,10 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
     public static function tearDownAfterClass(): void
     {
     }
+
+    public function testInvalidAPIFormat(): void
+    {
+        $this->expectException(\aportela\LastFMWrapper\Exception\InvalidAPIFormatException::class);
+        new \aportela\LastFMWrapper\Artist(self::$logger, "my_custom_format", "secret");
+    }
 }

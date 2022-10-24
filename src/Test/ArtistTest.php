@@ -53,12 +53,6 @@ final class ArtistTest extends BaseTest
         parent::tearDownAfterClass();
     }
 
-    public function testInvalidAPIFormat(): void
-    {
-        $this->expectException(\aportela\LastFMWrapper\Exception\InvalidAPIFormatException::class);
-        new \aportela\LastFMWrapper\Artist(self::$logger, "my_custom_format", "secret");
-    }
-
     public function testSearchJSON(): void
     {
         $results = self::$jsonAPI->search("Roxette", 1);
