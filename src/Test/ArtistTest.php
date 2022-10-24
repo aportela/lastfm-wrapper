@@ -76,6 +76,7 @@ final class ArtistTest extends BaseTest
         $this->assertSame(self::$jsonAPI->name, "Roxette");
         $this->assertSame(self::$jsonAPI->url, "https://www.last.fm/music/Roxette");
         $this->assertIsArray(self::$jsonAPI->tags);
+        $this->assertIsArray(self::$jsonAPI->similar);
         $this->assertNotEmpty(self::$jsonAPI->bio->summary);
         $this->assertNotEmpty(self::$jsonAPI->bio->content);
     }

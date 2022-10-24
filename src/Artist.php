@@ -11,6 +11,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
     public $name;
     public $url;
     public $tags = array();
+    public $similar = array();
     public $bio;
 
     public function search(string $name, int $limit = 1): array
@@ -72,6 +73,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
         $this->name = null;
         $this->url = null;
         $this->tags = [];
+        $this->similar = [];
         $this->bio = null;
         if ($this->apiFormat == \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON) {
             $json = json_decode($this->raw);
@@ -84,9 +86,17 @@ class Artist extends \aportela\LastFMWrapper\Entity
                         foreach ($json->{"artist"}->{"tags"}->{"tag"} as $tag) {
                             $this->tags[] = trim(mb_strtolower((string) $tag->{"name"}));
                         }
-                        $this->tags = array_unique(($this->tags));
+                        $this->tags = array_unique($this->tags);
                     } else {
                         $this->tags = [];
+                    }
+                    if (isset($json->{"artist"}->{"similar"})) {
+                        foreach ($json->{"artist"}->{"similar"}->{"artist"} as $artist) {
+                            $this->similar[] = (string) $artist->{"name"};
+                        }
+                        $this->similar = array_unique($this->similar);
+                    } else {
+                        $this->similar = [];
                     }
                     $this->bio = (object) array(
                         "summary" => isset($json->{"artist"}->{"bio"}) && isset($json->{"artist"}->{"bio"}->{"summary"}) ? (string) $json->{"artist"}->{"bio"}->{"summary"} : null,
