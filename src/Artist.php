@@ -22,47 +22,51 @@ class Artist extends \aportela\LastFMWrapper\Entity
         if ($response->code == 200) {
             if ($this->apiFormat == \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON) {
                 $json = json_decode($response->body);
-                if (isset($json->{"results"}) && isset($json->{"results"}->{"opensearch:totalResults"}) && $json->{"results"}->{"opensearch:totalResults"} > 0) {
-                    $results = [];
-                    foreach ($json->{"results"}->{"artistmatches"}->{"artist"} as $artist) {
-                        $results[] = (object) [
-                            "mbId" => isset($artist->{"mbid"}) ? (string) $artist->{"mbid"} : null,
-                            "name" => isset($artist->{"name"}) ? (string) $artist->{"name"} : null,
-                            "url" => isset($artist->{"url"}) ? (string) $artist->{"url"} : null
-                        ];
-                    }
-                    return ($results);
-                } else {
-                    if (isset($json->{"error"})) {
-                        switch ($json->{"error"}) {
-                            case 29:
-                                throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException($name, $json->{"error"});
-                                break;
-                            default:
-                                throw new \aportela\LastFMWrapper\Exception\HTTPException($name, $json->{"error"});
-                                break;
+                if (json_last_error()  == JSON_ERROR_NONE) {
+                    if (isset($json->{"results"}) && isset($json->{"results"}->{"opensearch:totalResults"}) && $json->{"results"}->{"opensearch:totalResults"} > 0) {
+                        $results = [];
+                        foreach ($json->{"results"}->{"artistmatches"}->{"artist"} as $artist) {
+                            $results[] = (object) [
+                                "mbId" => isset($artist->{"mbid"}) ? (string) $artist->{"mbid"} : null,
+                                "name" => isset($artist->{"name"}) ? (string) $artist->{"name"} : null,
+                                "url" => isset($artist->{"url"}) ? (string) $artist->{"url"} : null
+                            ];
                         }
+                        return ($results);
                     } else {
-                        throw new \aportela\LastFMWrapper\Exception\HTTPException($name, "");
+                        if (isset($json->{"error"})) {
+                            switch ($json->{"error"}) {
+                                case 29:
+                                    throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist:" . $name, $json->{"error"});
+                                    break;
+                                default:
+                                    throw new \aportela\LastFMWrapper\Exception\HTTPException("artist:" . $name, $json->{"error"});
+                                    break;
+                            }
+                        } else {
+                            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist:" . $name, $response->code);
+                        }
                     }
+                } else {
+                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("invalid json");
                 }
             } else {
                 throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormatException($this->apiFormat);
             }
         } else {
-            throw new \aportela\LastFMWrapper\Exception\HTTPException($name, $response->code);
+            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist:" . $name, $response->code);
         }
     }
 
-    public function get(string $name, string $mbId = ""): void
+    public function get(string $name): void
     {
-        $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey,  $this->apiFormat == \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON ? \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON : null);
-        $this->logger->debug("LastFMWrapper\Artist::get", array("name" => $name, "mbId" => $mbId, "apiURL" => $url));
+        $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey, $this->apiFormat == \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON ? \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON : null);
+        $this->logger->debug("LastFMWrapper\Artist::get", array("name" => $name, "apiURL" => $url));
         $response = $this->http->GET($url);
         if ($response->code == 200) {
             $this->parse($response->body);
         } else {
-            throw new \aportela\LastFMWrapper\Exception\HTTPException($mbId, $response->code);
+            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $name, $response->code);
         }
     }
 
