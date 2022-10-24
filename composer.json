@@ -30,6 +30,6 @@
         "phpunit/phpunit": "^9.5"
     },
     "scripts": {
-        "test": "vendor/bin/phpunit.bat --colors=always --verbose src/Test/"
+        "test": "vendor/bin/phpunit --colors=always --verbose src/Test/"
     }
 }
