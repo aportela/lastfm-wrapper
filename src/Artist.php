@@ -92,9 +92,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
                     }
                     if (isset($json->{"artist"}->{"similar"})) {
                         foreach ($json->{"artist"}->{"similar"}->{"artist"} as $artist) {
-                            $this->similar[] = (string) $artist->{"name"};
+                            $this->similar[] = (object) [
+                                "name" => (string) $artist->{"name"},
+                                "url" => (string) $artist->{"url"}
+                            ];
                         }
-                        $this->similar = array_unique($this->similar);
                     } else {
                         $this->similar = [];
                     }
