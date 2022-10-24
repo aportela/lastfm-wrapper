@@ -34,6 +34,7 @@ class LastFM
             $this->http = new \aportela\HTTPRequestWrapper\HTTPRequest($this->logger, self::USER_AGENT);
         }
         if (!empty($apiKey)) {
+            $this->logger->debug("LastFMWrapper\LastFM::__construct using API KEY: " . $apiKey);
             $this->apiKey = $apiKey;
         } else {
             $this->logger->critical("LastFMWrapper\LastFM::__construct ERROR: API key empty/not found");
