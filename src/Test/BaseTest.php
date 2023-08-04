@@ -21,9 +21,6 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     {
         self::$logger = new \Psr\Log\NullLogger("");
         self::$lastFMAPIKey = getenv('LASTFM_API_KEY', true) ? getenv('LASTFM_API_KEY') : null;
-        if (empty(self::$lastFMAPIKey)) {
-            throw new \aportela\LastFMWrapper\Exception\InvalidAPIKeyException("LASTFM_API_KEY environment variable NOT FOUND");
-        }
     }
 
     /**
@@ -32,6 +29,9 @@ class BaseTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp(): void
     {
+        if (empty(self::$lastFMAPIKey)) {
+            $this->markTestSkipped("LASTFM_API_KEY environment variable NOT FOUND");
+        }
     }
 
     /**
