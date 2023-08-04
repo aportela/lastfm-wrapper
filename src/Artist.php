@@ -16,11 +16,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
 
     public function search(string $name, int $limit = 1): array
     {
-        $url = sprintf(self::SEARCH_API_URL, urlencode($name), $this->apiKey, $limit, $this->apiFormat);
+        $url = sprintf(self::SEARCH_API_URL, urlencode($name), $this->apiKey, $limit, $this->apiFormat->value);
         $this->logger->debug("LastFMWrapper\Artist::search", array("name" => $name, "limit" => $limit, "apiURL" => $url));
         $response = $this->http->GET($url);
         if ($response->code == 200) {
-            if ($this->apiFormat == \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON) {
+            if ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON) {
                 $json = json_decode($response->body);
                 if (json_last_error()  == JSON_ERROR_NONE) {
                     if (isset($json->{"results"}) && isset($json->{"results"}->{"opensearch:totalResults"}) && $json->{"results"}->{"opensearch:totalResults"} > 0) {
@@ -51,7 +51,8 @@ class Artist extends \aportela\LastFMWrapper\Entity
                     throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("invalid json");
                 }
             } else {
-                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormatException($this->apiFormat);
+                // TODO: XML API
+                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormatException($this->apiFormat->value);
             }
         } else {
             throw new \aportela\LastFMWrapper\Exception\HTTPException("artist:" . $name, $response->code);
@@ -60,7 +61,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
 
     public function get(string $name): void
     {
-        $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey, $this->apiFormat == \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON ? \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON : null);
+        $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey, $this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON ? \aportela\LastFMWrapper\APIFormat::JSON->value : null);
         $this->logger->debug("LastFMWrapper\Artist::get", array("name" => $name, "apiURL" => $url));
         $response = $this->http->GET($url);
         if ($response->code == 200) {
@@ -70,7 +71,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
         }
     }
 
-    public function parse(string $rawText)
+    public function parse(string $rawText): void
     {
         $this->raw = $rawText;
         $this->mbId = null;
@@ -79,7 +80,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
         $this->tags = [];
         $this->similar = [];
         $this->bio = null;
-        if ($this->apiFormat == \aportela\LastFMWrapper\LastFM::API_FORMAT_JSON) {
+        if ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON) {
             $json = json_decode($this->raw);
             if (json_last_error()  == JSON_ERROR_NONE) {
                 if (isset($json->{"artist"})) {
@@ -115,7 +116,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
                 throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("invalid json");
             }
         } else {
-            throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormatException($this->apiFormat);
+            throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormatException($this->apiFormat->value);
         }
     }
 }
