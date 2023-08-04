@@ -5,22 +5,16 @@ namespace aportela\LastFMWrapper;
 class LastFM
 {
     const USER_AGENT = "LastFMWrapper - https://github.com/aportela/lastfm-wrapper (766f6964+github@gmail.com)";
-    const API_FORMAT_JSON = "json";
 
-    protected $logger;
-    protected $http;
-    protected $apiFormat;
-    protected $apiKey;
+    protected \Psr\Log\LoggerInterface $logger;
+    protected \aportela\HTTPRequestWrapper\HTTPRequest $http;
+    protected \aportela\LastFMWrapper\APIFormat $apiFormat;
+    protected string $apiKey;
 
-    public function __construct(\Psr\Log\LoggerInterface $logger, string $apiFormat, string $apiKey)
+    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey)
     {
         $this->logger = $logger;
         $this->logger->debug("LastFMWrapper\LastFM::__construct");
-        $supportedApiFormats = [self::API_FORMAT_JSON];
-        if (!in_array($apiFormat, $supportedApiFormats)) {
-            $this->logger->critical("LastFMWrapper\LastFM::__construct ERROR: invalid api format");
-            throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormatException("supported formats: " . implode(", ", $supportedApiFormats));
-        }
         $this->apiFormat = $apiFormat;
         $loadedExtensions = get_loaded_extensions();
         if (!in_array("libxml", $loadedExtensions)) {
@@ -33,13 +27,7 @@ class LastFM
             $this->logger->debug("LastFMWrapper\LastFM::__construct");
             $this->http = new \aportela\HTTPRequestWrapper\HTTPRequest($this->logger, self::USER_AGENT);
         }
-        if (!empty($apiKey)) {
-            $this->logger->debug("LastFMWrapper\LastFM::__construct using API KEY: " . $apiKey);
-            $this->apiKey = $apiKey;
-        } else {
-            $this->logger->critical("LastFMWrapper\LastFM::__construct ERROR: API key empty/not found");
-            throw new \aportela\LastFMWrapper\Exception\InvalidAPIKeyException("");
-        }
+        $this->apiKey = $apiKey;
     }
 
     public function __destruct()
