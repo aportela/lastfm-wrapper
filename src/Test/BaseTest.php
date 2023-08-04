@@ -6,9 +6,13 @@ namespace aportela\LastFMWrapper\Test;
 
 require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
-abstract class BaseTest extends \PHPUnit\Framework\TestCase
+class BaseTest extends \PHPUnit\Framework\TestCase
 {
     protected static $logger;
+    protected static ?string $lastFMAPIKey;
+
+    protected static $jsonAPI;
+    protected static $xmlAPI;
 
     /**
      * Called once just like normal constructor
@@ -16,6 +20,10 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
     public static function setUpBeforeClass(): void
     {
         self::$logger = new \Psr\Log\NullLogger("");
+        self::$lastFMAPIKey = getenv('LASTFM_API_KEY', true) ? getenv('LASTFM_API_KEY') : null;
+        if (empty(self::$lastFMAPIKey)) {
+            throw new \aportela\LastFMWrapper\Exception\InvalidAPIKeyException("LASTFM_API_KEY environment variable NOT FOUND");
+        }
     }
 
     /**
@@ -40,9 +48,8 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
     {
     }
 
-    public function testInvalidAPIFormat(): void
+    public function testCheckEnvironmentAPIKey(): void
     {
-        $this->expectException(\aportela\LastFMWrapper\Exception\InvalidAPIFormatException::class);
-        new \aportela\LastFMWrapper\Artist(self::$logger, "my_custom_format", "secret");
+        $this->assertNotEmpty(self::$lastFMAPIKey);
     }
 }
