@@ -20,39 +20,31 @@ class Track extends \aportela\LastFMWrapper\Entity
         $this->logger->debug("LastFMWrapper\Album::search", array("artist" => $artist, "track" => $track, "limit" => $limit, "apiURL" => $url));
         $response = $this->http->GET($url);
         if ($response->code == 200) {
-            if ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON) {
-                $json = json_decode($response->body);
-                if (json_last_error()  == JSON_ERROR_NONE) {
-                    if (isset($json->{"results"}) && isset($json->{"results"}->{"opensearch:totalResults"}) && $json->{"results"}->{"opensearch:totalResults"} > 0) {
-                        $results = [];
-                        foreach ($json->{"results"}->{"trackmatches"}->{"track"} as $track) {
-                            $results[] = (object) [
-                                "mbId" => isset($track->{"mbid"}) ? (string) $track->{"mbid"} : null,
-                                "name" => isset($track->{"name"}) ? (string) $track->{"name"} : null,
-                                "artist" => isset($track->{"artist"}) ? (string) $track->{"artist"} : null,
-                                "url" => isset($track->{"url"}) ? (string) $track->{"url"} : null
-                            ];
-                        }
-                        return ($results);
-                    } else {
-                        if (isset($json->{"error"})) {
-                            switch ($json->{"error"}) {
-                                case 29:
-                                    throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: " . $artist . " - track: " . $track, $json->{"error"});
-                                    break;
-                                default:
-                                    throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $json->{"error"});
-                                    break;
-                            }
-                        } else {
-                            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $response->code);
-                        }
+            $data = $this->parseHTTPResponseToObject($response->body);
+            if (isset($data->{"results"}) && isset($data->{"results"}->{"opensearch:totalResults"}) && $data->{"results"}->{"opensearch:totalResults"} > 0) {
+                $results = [];
+                foreach ($data->{"results"}->{"trackmatches"}->{"track"} as $track) {
+                    $results[] = (object) [
+                        "mbId" => isset($track->{"mbid"}) ? (string) $track->{"mbid"} : null,
+                        "name" => isset($track->{"name"}) ? (string) $track->{"name"} : null,
+                        "artist" => isset($track->{"artist"}) ? (string) $track->{"artist"} : null,
+                        "url" => isset($track->{"url"}) ? (string) $track->{"url"} : null
+                    ];
+                }
+                return ($results);
+            } else {
+                if (isset($data->{"error"})) {
+                    switch ($data->{"error"}) {
+                        case 29:
+                            throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: " . $artist . " - track: " . $track, $data->{"error"});
+                            break;
+                        default:
+                            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $data->{"error"});
+                            break;
                     }
                 } else {
-                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("invalid json");
+                    throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $response->code);
                 }
-            } else {
-                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormatException($this->apiFormat->value);
             }
         } else {
             throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $response->code);
@@ -61,7 +53,7 @@ class Track extends \aportela\LastFMWrapper\Entity
 
     public function get(string $artist, string $track): void
     {
-        $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON ? \aportela\LastFMWrapper\APIFormat::JSON->value : null);
+        $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $this->apiFormat->value);
         $this->logger->debug("LastFMWrapper\Track::get", array("artist" => $artist, "track" => $track, "apiURL" => $url));
         $response = $this->http->GET($url);
         if ($response->code == 200) {
@@ -80,40 +72,32 @@ class Track extends \aportela\LastFMWrapper\Entity
         $this->tags = [];
         $this->artist = null;
         $this->album = null;
-        if ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON) {
-            $json = json_decode($this->raw);
-            if (json_last_error()  == JSON_ERROR_NONE) {
-                if (isset($json->{"track"})) {
-                    $this->mbId = isset($json->{"track"}->{"mbid"}) ? (string) $json->{"track"}->{"mbid"} : null;
-                    $this->name = isset($json->{"track"}->{"name"}) ? (string) $json->{"track"}->{"name"} : null;
-                    $this->url = isset($json->{"track"}->{"url"}) ? (string) $json->{"track"}->{"url"} : null;
-                    if (isset($json->{"track"}->{"toptags"})) {
-                        foreach ($json->{"track"}->{"toptags"}->{"tag"} as $tag) {
-                            $this->tags[] = trim(mb_strtolower((string) $tag->{"name"}));
-                        }
-                        $this->tags = array_unique($this->tags);
-                    } else {
-                        $this->tags = [];
-                    }
-                    $this->artist = (object) [
-                        "name" => (string) $json->{"track"}->{"artist"}->{"name"},
-                        "mbId" => (string) $json->{"track"}->{"artist"}->{"mbid"},
-                        "url" => (string) $json->{"track"}->{"artist"}->{"url"}
-                    ];
-                    $this->album = (object) [
-                        "artist" => (string) $json->{"track"}->{"album"}->{"artist"},
-                        "title" => (string) $json->{"track"}->{"album"}->{"title"},
-                        "mbId" => (string) $json->{"track"}->{"album"}->{"mbid"},
-                        "url" => (string) $json->{"track"}->{"album"}->{"url"}
-                    ];
-                } else {
-                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("track field not found");
+        $data = $this->parseHTTPResponseToObject($this->raw);
+        if (isset($data->{"track"})) {
+            $this->mbId = isset($data->{"track"}->{"mbid"}) ? (string) $data->{"track"}->{"mbid"} : null;
+            $this->name = isset($data->{"track"}->{"name"}) ? (string) $data->{"track"}->{"name"} : null;
+            $this->url = isset($data->{"track"}->{"url"}) ? (string) $data->{"track"}->{"url"} : null;
+            if (isset($data->{"track"}->{"toptags"})) {
+                foreach ($data->{"track"}->{"toptags"}->{"tag"} as $tag) {
+                    $this->tags[] = trim(mb_strtolower((string) $tag->{"name"}));
                 }
+                $this->tags = array_unique($this->tags);
             } else {
-                throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("invalid json");
+                $this->tags = [];
             }
+            $this->artist = (object) [
+                "name" => (string) $data->{"track"}->{"artist"}->{"name"},
+                "mbId" => (string) $data->{"track"}->{"artist"}->{"mbid"},
+                "url" => (string) $data->{"track"}->{"artist"}->{"url"}
+            ];
+            $this->album = (object) [
+                "artist" => (string) $data->{"track"}->{"album"}->{"artist"},
+                "title" => (string) $data->{"track"}->{"album"}->{"title"},
+                "mbId" => (string) $data->{"track"}->{"album"}->{"mbid"},
+                "url" => (string) $data->{"track"}->{"album"}->{"url"}
+            ];
         } else {
-            throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormatException($this->apiFormat->value);
+            throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("track field not found");
         }
     }
 }
