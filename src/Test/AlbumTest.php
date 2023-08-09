@@ -22,32 +22,6 @@ final class AlbumTest extends BaseTest
         self::$xmlAPI = new \aportela\LastFMWrapper\Album(self::$logger, \aportela\LastFMWrapper\APIFormat::XML, self::$lastFMAPIKey ?? "");
     }
 
-    /**
-     * Initialize the test case
-     * Called for every defined test
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    /**
-     * Clean up the test case, called for every defined test
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
-    /**
-     * Clean up the whole test class
-     */
-    public static function tearDownAfterClass(): void
-    {
-        parent::tearDownAfterClass();
-    }
-
-
     public function testSearchJSON(): void
     {
         $results = self::$jsonAPI->search("Roxette", "Tourism", 1);
