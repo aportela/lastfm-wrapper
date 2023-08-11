@@ -4,7 +4,7 @@ namespace aportela\LastFMWrapper;
 
 class LastFM
 {
-    const USER_AGENT = "LastFMWrapper - https://github.com/aportela/lastfm-wrapper (766f6964+github@gmail.com)";
+    public const USER_AGENT = "LastFMWrapper - https://github.com/aportela/lastfm-wrapper (766f6964+github@gmail.com)";
 
     protected \Psr\Log\LoggerInterface $logger;
     protected \aportela\HTTPRequestWrapper\HTTPRequest $http;
@@ -20,7 +20,7 @@ class LastFM
         if (!in_array("libxml", $loadedExtensions)) {
             $this->logger->critical("LastFMWrapper\LastFM::__construct ERROR: libxml extension not found");
             throw new \aportela\LastFMWrapper\Exception\LibXMLMissingException("loaded extensions: " . implode(", ", $loadedExtensions));
-        } else if (!in_array("SimpleXML", $loadedExtensions)) {
+        } elseif (!in_array("SimpleXML", $loadedExtensions)) {
             $this->logger->critical("LastFMWrapper\LastFM::__construct ERROR: SimpleXML extension not found");
             throw new \aportela\LastFMWrapper\Exception\SimpleXMLMissingException("loaded extensions: " . implode(", ", $loadedExtensions));
         } else {
