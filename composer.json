@@ -2,7 +2,7 @@
     "name": "aportela/lastfm-wrapper",
     "description": "Custom last.fm api wrapper",
     "type": "library",
-    "license": "GPL-3.0-only",
+    "license": "AFFERO GENERAL PUBLIC LICENSE",
     "authors": [
         {
             "name": "alex",
