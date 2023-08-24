@@ -123,7 +123,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
                 }
                 return ($imageURL);
             } else {
-                throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $name, $response->code);
+                throw new \aportela\LastFMWrapper\Exception\HTTPException("url: " . $artistPageURL, $response->code);
             }
         }
     }
