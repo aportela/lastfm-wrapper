@@ -63,4 +63,9 @@ final class ArtistTest extends BaseTest
         $this->assertNotEmpty(self::$xmlAPI->bio->summary);
         $this->assertNotEmpty(self::$xmlAPI->bio->content);
     }
+
+    public function testGetImageFromArtistPageURL(): void
+    {
+        $this->assertNotEmpty(self::$xmlAPI->getImageFromArtistPageURL("https://www.last.fm/music/Roxette"));
+    }
 }

@@ -102,4 +102,29 @@ class Artist extends \aportela\LastFMWrapper\Entity
             throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("artist field not found");
         }
     }
+
+    public function getImageFromArtistPageURL(string $artistPageURL): ?string
+    {
+        $imageURL = null;
+        $this->logger->debug("LastFMWrapper\Artist::getImageFromArtistPageURL", array("url" => $artistPageURL));
+        if (str_starts_with($artistPageURL, "https://www.last.fm/music/")) {
+            $response = $this->http->GET($artistPageURL);
+            if ($response->code == 200) {
+                $doc = new \DomDocument();
+                $doc->loadHTML($response->body);
+                $xpath = new \DOMXPath($doc);
+                $query = '//*/meta[starts-with(@property, \'og:\')]';
+                $metas = $xpath->query($query);
+                $rmetas = array();
+                foreach ($metas as $meta) {
+                    if ($meta->getAttribute('property') == 'og:image') {
+                        $imageURL = $meta->getAttribute('content');
+                    }
+                }
+                return ($imageURL);
+            } else {
+                throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $name, $response->code);
+            }
+        }
+    }
 }
