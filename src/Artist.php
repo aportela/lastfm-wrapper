@@ -110,18 +110,21 @@ class Artist extends \aportela\LastFMWrapper\Entity
         if (str_starts_with($artistPageURL, "https://www.last.fm/music/")) {
             $response = $this->http->GET($artistPageURL);
             if ($response->code == 200) {
-                $doc = new \DomDocument();
-                $doc->loadHTML($response->body);
-                $xpath = new \DOMXPath($doc);
-                $query = '//*/meta[starts-with(@property, \'og:\')]';
-                $metas = $xpath->query($query);
-                $rmetas = array();
-                foreach ($metas as $meta) {
-                    if ($meta->getAttribute('property') == 'og:image') {
-                        $imageURL = $meta->getAttribute('content');
+                if (!empty($response->body)) {
+                    $doc = new \DomDocument();
+                    $doc->loadHTML($response->body);
+                    $xpath = new \DOMXPath($doc);
+                    $query = '//*/meta[starts-with(@property, \'og:\')]';
+                    $metas = $xpath->query($query);
+                    foreach ($metas as $meta) {
+                        if ($meta->getAttribute('property') == 'og:image') {
+                            $imageURL = $meta->getAttribute('content');
+                        }
                     }
+                    return ($imageURL);
+                } else {
+                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("empy body");
                 }
-                return ($imageURL);
             } else {
                 throw new \aportela\LastFMWrapper\Exception\HTTPException("url: " . $artistPageURL, $response->code);
             }
