@@ -8,6 +8,17 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class TrackTest extends BaseTest
 {
+    private const string TEST_ARTIST_NAME = "Roxette";
+    private const string TEST_ARTIST_MBID = "d3b2711f-2baa-441a-be95-14945ca7e6ea";
+    private const string TEST_ARTIST_URL = "https://www.last.fm/music/Roxette";
+
+    private const string TEST_ARTIST_ALBUM_NAME = "Tourism";
+    private const string TEST_ARTIST_ALBUM_URL = "https://www.last.fm/music/Roxette/Tourism";
+
+    private const string TEST_ARTIST_TRACK_TITLE = "Silver Blue";
+    private const string TEST_ARTIST_TRACK_URL = "https://www.last.fm/music/Roxette/_/Silver+Blue";
+
+
     /*
     private static $mbXML;
     */
@@ -22,55 +33,49 @@ final class TrackTest extends BaseTest
         self::$xmlAPI = new \aportela\LastFMWrapper\Track(self::$logger, \aportela\LastFMWrapper\APIFormat::XML, self::$lastFMAPIKey ?? "");
     }
 
-    public function testSearchJSON(): void
+    public function testSearchJson(): void
     {
-        $results = self::$jsonAPI->search("Roxette", "The Look", 1);
+        $results = self::$jsonAPI->search(self::TEST_ARTIST_NAME, self::TEST_ARTIST_TRACK_TITLE, 1);
         $this->assertCount(1, $results);
-        $this->assertSame($results[0]->mbId, "e42e2e0f-d320-47cf-948d-3ba9add0e2e3");
-        $this->assertSame($results[0]->artist, "Roxette");
-        $this->assertSame($results[0]->name, "The Look");
-        $this->assertSame($results[0]->url, "https://www.last.fm/music/Roxette/_/The+Look");
+        $this->assertSame(self::TEST_ARTIST_NAME, $results[0]->artist);
+        $this->assertSame(self::TEST_ARTIST_TRACK_TITLE, $results[0]->name);
+        $this->assertSame(self::TEST_ARTIST_TRACK_URL, $results[0]->url);
     }
 
-    public function testSearchXML(): void
+    public function testSearchXml(): void
     {
-        $results = self::$xmlAPI->search("Roxette", "The Look", 1);
+        $results = self::$xmlAPI->search(self::TEST_ARTIST_NAME, self::TEST_ARTIST_TRACK_TITLE, 1);
         $this->assertCount(1, $results);
-        $this->assertSame($results[0]->mbId, "e42e2e0f-d320-47cf-948d-3ba9add0e2e3");
-        $this->assertSame($results[0]->artist, "Roxette");
-        $this->assertSame($results[0]->name, "The Look");
-        $this->assertSame($results[0]->url, "https://www.last.fm/music/Roxette/_/The+Look");
+        $this->assertSame(self::TEST_ARTIST_NAME, $results[0]->artist);
+        $this->assertSame(self::TEST_ARTIST_TRACK_TITLE, $results[0]->name);
+        $this->assertSame(self::TEST_ARTIST_TRACK_URL, $results[0]->url);
     }
 
-    public function testGetJSON(): void
+    public function testGetJson(): void
     {
-        self::$jsonAPI->get("Roxette", "The Look");
-        $this->assertSame(self::$jsonAPI->mbId, "e42e2e0f-d320-47cf-948d-3ba9add0e2e3");
-        $this->assertSame(self::$jsonAPI->name, "The Look");
-        $this->assertSame(self::$jsonAPI->url, "https://www.last.fm/music/Roxette/_/The+Look");
-        $this->assertSame(self::$jsonAPI->artist->name, "Roxette");
-        $this->assertSame(self::$jsonAPI->artist->mbId, "d3b2711f-2baa-441a-be95-14945ca7e6ea");
-        $this->assertSame(self::$jsonAPI->artist->url, "https://www.last.fm/music/Roxette");
-        $this->assertSame(self::$jsonAPI->album->artist, "Roxette");
-        $this->assertSame(self::$jsonAPI->album->title, "Look Sharp!");
-        $this->assertSame(self::$jsonAPI->album->mbId, "7f73dca2-79e7-302d-bb09-1a5db381e7f2");
-        $this->assertSame(self::$jsonAPI->album->url, "https://www.last.fm/music/Roxette/Look+Sharp%21");
+        self::$jsonAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_TRACK_TITLE);
+        $this->assertSame(self::TEST_ARTIST_TRACK_TITLE, self::$jsonAPI->name);
+        $this->assertSame(self::TEST_ARTIST_TRACK_URL, self::$jsonAPI->url);
+        $this->assertSame(self::TEST_ARTIST_NAME, self::$jsonAPI->artist->name);
+        $this->assertSame(self::TEST_ARTIST_MBID, self::$jsonAPI->artist->mbId);
+        $this->assertSame(self::TEST_ARTIST_URL, self::$jsonAPI->artist->url);
+        $this->assertSame(self::TEST_ARTIST_NAME, self::$jsonAPI->album->artist);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_NAME, self::$jsonAPI->album->title);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, self::$jsonAPI->album->url);
         $this->assertIsArray(self::$jsonAPI->tags);
     }
 
-    public function testGetXML(): void
+    public function testGetXml(): void
     {
-        self::$xmlAPI->get("Roxette", "The Look");
-        $this->assertSame(self::$xmlAPI->mbId, "e42e2e0f-d320-47cf-948d-3ba9add0e2e3");
-        $this->assertSame(self::$xmlAPI->name, "The Look");
-        $this->assertSame(self::$xmlAPI->url, "https://www.last.fm/music/Roxette/_/The+Look");
-        $this->assertSame(self::$xmlAPI->artist->name, "Roxette");
-        $this->assertSame(self::$xmlAPI->artist->mbId, "d3b2711f-2baa-441a-be95-14945ca7e6ea");
-        $this->assertSame(self::$xmlAPI->artist->url, "https://www.last.fm/music/Roxette");
-        $this->assertSame(self::$xmlAPI->album->artist, "Roxette");
-        $this->assertSame(self::$xmlAPI->album->title, "Look Sharp!");
-        $this->assertSame(self::$xmlAPI->album->mbId, "7f73dca2-79e7-302d-bb09-1a5db381e7f2");
-        $this->assertSame(self::$xmlAPI->album->url, "https://www.last.fm/music/Roxette/Look+Sharp%21");
+        self::$xmlAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_TRACK_TITLE);
+        $this->assertSame(self::TEST_ARTIST_TRACK_TITLE, self::$xmlAPI->name);
+        $this->assertSame(self::TEST_ARTIST_TRACK_URL, self::$xmlAPI->url);
+        $this->assertSame(self::TEST_ARTIST_NAME, self::$xmlAPI->artist->name);
+        $this->assertSame(self::TEST_ARTIST_MBID, self::$xmlAPI->artist->mbId);
+        $this->assertSame(self::TEST_ARTIST_URL, self::$xmlAPI->artist->url);
+        $this->assertSame(self::TEST_ARTIST_NAME, self::$xmlAPI->album->artist);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_NAME, self::$xmlAPI->album->title);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, self::$xmlAPI->album->url);
         $this->assertIsArray(self::$xmlAPI->tags);
     }
 }

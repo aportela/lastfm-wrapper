@@ -7,13 +7,18 @@ class Track extends \aportela\LastFMWrapper\Entity
     private const SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=track.search&artist=%s&track=%s&api_key=%s&limit=%d&format=%s";
     private const GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=%s&track=%s&api_key=%s&autocorrect=1&format=%s";
 
-    public ?string $mbId;
     public ?string $name;
     public ?string $url;
     public mixed $artist;
     public mixed $album;
+    /**
+     * @var array<string>
+     */
     public array $tags = [];
 
+    /**
+     * @return array<mixed>
+     */
     public function search(string $artist, string $track, int $limit = 1): array
     {
         $url = sprintf(self::SEARCH_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $limit, $this->apiFormat->value);
@@ -25,7 +30,6 @@ class Track extends \aportela\LastFMWrapper\Entity
                 $results = [];
                 foreach ($data->{"results"}->{"trackmatches"}->{"track"} as $track) {
                     $results[] = (object) [
-                        "mbId" => isset($track->{"mbid"}) ? (string) $track->{"mbid"} : null,
                         "name" => isset($track->{"name"}) ? (string) $track->{"name"} : null,
                         "artist" => isset($track->{"artist"}) ? (string) $track->{"artist"} : null,
                         "url" => isset($track->{"url"}) ? (string) $track->{"url"} : null
@@ -34,10 +38,11 @@ class Track extends \aportela\LastFMWrapper\Entity
                 return ($results);
             } else {
                 if (isset($data->{"error"})) {
-                    if ($data->{"error"} == 29) {
-                        throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: " . $artist . " - track: " . $track, $data->{"error"});
+                    $error = intval($data->{"error"});
+                    if ($error) {
+                        throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: " . $artist . " - track: " . $track, $error);
                     } else {
-                        throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $data->{"error"});
+                        throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $error);
                     }
                 } else {
                     throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $response->code);
@@ -63,7 +68,6 @@ class Track extends \aportela\LastFMWrapper\Entity
     public function parse(string $rawText): void
     {
         $this->raw = $rawText;
-        $this->mbId = null;
         $this->name = null;
         $this->url = null;
         $this->tags = [];
@@ -71,7 +75,6 @@ class Track extends \aportela\LastFMWrapper\Entity
         $this->album = null;
         $data = $this->parseHTTPResponseToObject($this->raw);
         if (isset($data->{"track"})) {
-            $this->mbId = isset($data->{"track"}->{"mbid"}) ? (string) $data->{"track"}->{"mbid"} : null;
             $this->name = isset($data->{"track"}->{"name"}) ? (string) $data->{"track"}->{"name"} : null;
             $this->url = isset($data->{"track"}->{"url"}) ? (string) $data->{"track"}->{"url"} : null;
             if (isset($data->{"track"}->{"toptags"})) {
@@ -90,7 +93,6 @@ class Track extends \aportela\LastFMWrapper\Entity
             $this->album = (object) [
                 "artist" => (string) $data->{"track"}->{"album"}->{"artist"},
                 "title" => (string) $data->{"track"}->{"album"}->{"title"},
-                "mbId" => (string) $data->{"track"}->{"album"}->{"mbid"},
                 "url" => (string) $data->{"track"}->{"album"}->{"url"}
             ];
         } else {

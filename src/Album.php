@@ -11,9 +11,18 @@ class Album extends \aportela\LastFMWrapper\Entity
     public ?string $name;
     public mixed $artist;
     public ?string $url;
+    /**
+     * @var array<string>
+     */
     public array $tags = [];
+    /**
+     * @var array<mixed>
+     */
     public array $tracks = [];
 
+    /**
+     * @return array<mixed>
+     */
     public function search(string $artist, string $album, int $limit = 1): array
     {
         $url = sprintf(self::SEARCH_API_URL, urlencode($artist), urlencode(($album)), $this->apiKey, $limit, $this->apiFormat->value);
@@ -33,13 +42,14 @@ class Album extends \aportela\LastFMWrapper\Entity
                 return ($results);
             } else {
                 if (isset($data->{"error"})) {
-                    if ($data->{"error"} == 29) {
-                        throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: " . $artist . " - album: " . $album, $data->{"error"});
+                    $error = intval($data->{"error"});
+                    if ($error == 29) {
+                        throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: " . $artist . " - album: " . $album, $error);
                     } else {
-                        throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - album: " . $album, $data->{"error"});
+                        throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - album: " . $album, $error);
                     }
                 } else {
-                    throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - album: " . $album, "");
+                    throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - album: " . $album);
                 }
             }
         } else {

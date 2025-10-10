@@ -10,10 +10,19 @@ class Artist extends \aportela\LastFMWrapper\Entity
     public ?string $mbId;
     public ?string $name;
     public ?string $url;
+    /**
+     * @var array<string>
+     */
     public array $tags = [];
+    /**
+     * @var array<mixed>
+     */
     public array $similar = [];
-    public ?string $bio;
+    public mixed $bio;
 
+    /**
+     * @return array<mixed>
+     */
     public function search(string $name, int $limit = 1): array
     {
         $url = sprintf(self::SEARCH_API_URL, urlencode($name), $this->apiKey, $limit, $this->apiFormat->value);
@@ -33,10 +42,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
                 return ($results);
             } else {
                 if (isset($data->{"error"})) {
-                    if ($data->{"error"} == 29) {
-                        throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist:" . $name, $data->{"error"});
+                    $error = intval($data->{"error"});
+                    if ($error == 29) {
+                        throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist:" . $name, $error);
                     } else {
-                        throw new \aportela\LastFMWrapper\Exception\HTTPException("artist:" . $name, $data->{"error"});
+                        throw new \aportela\LastFMWrapper\Exception\HTTPException("artist:" . $name, $error);
                     }
                 } else {
                     throw new \aportela\LastFMWrapper\Exception\HTTPException("artist:" . $name, $response->code);
@@ -114,7 +124,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
                     $query = '//*/meta[starts-with(@property, \'og:\')]';
                     $metas = $xpath->query($query);
                     foreach ($metas as $meta) {
-                        if ($meta->getAttribute('property') == 'og:image') {
+                        if ($meta instanceof \DOMElement && $meta->getAttribute('property') == 'og:image') {
                             $imageURL = $meta->getAttribute('content');
                         }
                     }
@@ -125,6 +135,8 @@ class Artist extends \aportela\LastFMWrapper\Entity
             } else {
                 throw new \aportela\LastFMWrapper\Exception\HTTPException("url: " . $artistPageURL, $response->code);
             }
+        } else {
+            throw new \aportela\LastFMWrapper\Exception\InvalidURLException("invalid url: " . $artistPageURL);
         }
     }
 }

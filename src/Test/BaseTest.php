@@ -11,8 +11,8 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     protected static \Psr\Log\NullLogger $logger;
     protected static ?string $lastFMAPIKey;
 
-    protected static $jsonAPI;
-    protected static $xmlAPI;
+    protected static mixed $jsonAPI;
+    protected static mixed $xmlAPI;
 
     /**
      * Called once just like normal constructor
@@ -37,14 +37,18 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     /**
      * Clean up the test case, called for every defined test
      */
-    public function tearDown(): void {}
+    public function tearDown(): void
+    {
+    }
 
     /**
      * Clean up the whole test class
      */
-    public static function tearDownAfterClass(): void {}
+    public static function tearDownAfterClass(): void
+    {
+    }
 
-    public function testCheckEnvironmentAPIKey(): void
+    public function testCheckEnvironmentApiKey(): void
     {
         $this->assertNotEmpty(self::$lastFMAPIKey);
     }
