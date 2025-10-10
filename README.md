@@ -10,7 +10,7 @@ Custom last.fm api wrapper
 
 ## Install (composer) dependencies:
 
-```shell
+```Shell
 composer require aportela/lastfm-wrapper
 ```
 
