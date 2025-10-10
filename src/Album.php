@@ -7,12 +7,12 @@ class Album extends \aportela\LastFMWrapper\Entity
     private const SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=album.search&artist=%s&album=%s&autocorrect=1&api_key=%s&limit=%d&format=%s";
     private const GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=%s&album=%s&api_key=%s&autocorrect=1&format=%s";
 
-    public $mbId;
-    public $name;
-    public $artist;
-    public $url;
-    public $tags = array();
-    public $tracks = array();
+    public ?string $mbId;
+    public ?string $name;
+    public mixed $artist;
+    public ?string $url;
+    public array $tags = [];
+    public array $tracks = [];
 
     public function search(string $artist, string $album, int $limit = 1): array
     {
@@ -33,13 +33,10 @@ class Album extends \aportela\LastFMWrapper\Entity
                 return ($results);
             } else {
                 if (isset($data->{"error"})) {
-                    switch ($data->{"error"}) {
-                        case 29:
-                            throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: " . $artist . " - album: " . $album, $data->{"error"});
-                            break;
-                        default:
-                            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - album: " . $album, $data->{"error"});
-                            break;
+                    if ($data->{"error"} == 29) {
+                        throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: " . $artist . " - album: " . $album, $data->{"error"});
+                    } else {
+                        throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - album: " . $album, $data->{"error"});
                     }
                 } else {
                     throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - album: " . $album, "");

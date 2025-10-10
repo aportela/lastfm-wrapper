@@ -8,7 +8,7 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 class BaseTest extends \PHPUnit\Framework\TestCase
 {
-    protected static $logger;
+    protected static \Psr\Log\NullLogger $logger;
     protected static ?string $lastFMAPIKey;
 
     protected static $jsonAPI;
@@ -19,7 +19,7 @@ class BaseTest extends \PHPUnit\Framework\TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        self::$logger = new \Psr\Log\NullLogger("");
+        self::$logger = new \Psr\Log\NullLogger();
         self::$lastFMAPIKey = getenv('LASTFM_API_KEY', true) ? getenv('LASTFM_API_KEY') : null;
     }
 
@@ -37,16 +37,12 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     /**
      * Clean up the test case, called for every defined test
      */
-    public function tearDown(): void
-    {
-    }
+    public function tearDown(): void {}
 
     /**
      * Clean up the whole test class
      */
-    public static function tearDownAfterClass(): void
-    {
-    }
+    public static function tearDownAfterClass(): void {}
 
     public function testCheckEnvironmentAPIKey(): void
     {
