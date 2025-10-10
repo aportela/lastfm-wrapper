@@ -16,7 +16,7 @@ composer require aportela/lastfm-wrapper
 
 ## Code example:
 
-```
+```php
 <?php
 
 require "vendor/autoload.php";
