@@ -6,19 +6,44 @@ class Entity extends \aportela\LastFMWrapper\LastFM
 {
     public ?string $raw;
 
-    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey)
+    private \aportela\LastFMWrapper\Cache $cache;
+
+    /**
+     * https://www.last.fm/api/intro
+     * Your account may be suspended if your application is continuously making several calls per second or if you’re making excessive calls. See our API Terms of Service for more information on limits.
+     */
+    private const MIN_THROTTLE_DELAY_MS = 500; // min allowed: 2 request per second
+    public const DEFAULT_THROTTLE_DELAY_MS = 1000; // default: 1 request per second
+
+    private int $originalThrottleDelayMS = 0;
+    private int $currentThrottleDelayMS = 0;
+    private int $lastThrottleTimestamp = 0;
+
+    protected ?string $cachePath = null;
+
+    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS, ?string $cachePath = null)
     {
         parent::__construct($logger, $apiFormat, $apiKey);
         $this->logger->debug("LastFMWrapper\Entity::__construct");
-        // avoids simplexml_load_string warnings
-        // https://stackoverflow.com/a/40585185
-        libxml_use_internal_errors(true);
+        if ($throttleDelayMS < self::MIN_THROTTLE_DELAY_MS) {
+            throw new \aportela\LastFMWrapper\Exception\InvalidThrottleMsDelayException("min throttle delay ms required: " . self::MIN_THROTTLE_DELAY_MS);
+        }
+        $this->originalThrottleDelayMS = $throttleDelayMS;
+        $this->currentThrottleDelayMS = $throttleDelayMS;
+        $this->lastThrottleTimestamp = intval(microtime(true) * 1000);
+        $this->cache = new \aportela\LastFMWrapper\Cache($logger, $apiFormat, $cachePath);
+        $this->reset();
     }
 
     public function __destruct()
     {
         parent::__destruct();
         $this->logger->debug("LastFMWrapper\Entity::__destruct");
+    }
+
+    protected function reset(): void
+    {
+        $this->raw = null;
     }
 
     protected function parseHTTPResponseToObject(string $httpResponse): mixed
@@ -39,5 +64,86 @@ class Entity extends \aportela\LastFMWrapper\LastFM
                 break;
         }
         return ($data);
+    }
+
+    /**
+     * increment throttle delay (time between api calls)
+     * call this function when api returns rate limit exception
+     * (or connection reset errors caused by remote server busy ?)
+     */
+    protected function incrementThrottle(): void
+    {
+        // allow incrementing current throttle delay to a max of 5 seconds
+        if ($this->currentThrottleDelayMS < 5000) {
+            // set next throttle delay with current value * 2 (wait more time on next api calls)
+            $this->currentThrottleDelayMS *= 2;
+        }
+    }
+
+    /**
+     * reset throttle to original value
+     */
+    protected function resetThrottle(): void
+    {
+        $this->currentThrottleDelayMS = $this->originalThrottleDelayMS;
+    }
+
+    /**
+     * throttle api calls
+     */
+    protected function checkThrottle(): void
+    {
+        if ($this->currentThrottleDelayMS > 0) {
+            $currentTimestamp = intval(microtime(true) * 1000);
+            while (($currentTimestamp - $this->lastThrottleTimestamp) < $this->currentThrottleDelayMS) {
+                usleep(10);
+                $currentTimestamp = intval(microtime(true) * 1000);
+            }
+            $this->lastThrottleTimestamp = $currentTimestamp;
+        }
+    }
+
+    /**
+     * save current raw data into disk cache
+     */
+    protected function saveCache(string $mbId, string $raw): bool
+    {
+        return ($this->cache->saveCache($mbId, $raw));
+    }
+
+    /**
+     * remove cache entry
+     */
+    protected function removeCache(string $mbId): bool
+    {
+        return ($this->cache->removeCache($mbId));
+    }
+
+    /**
+     * read disk cache into current raw data
+     */
+    protected function getCache(string $mbId): bool
+    {
+        $this->raw = null;
+        if ($cache = $this->cache->getCache($mbId)) {
+            $this->raw = $cache;
+            return (true);
+        } else {
+            return (false);
+        }
+    }
+
+    /**
+     * http handler GET method wrapper for catching CurlExecException (connection errors / server busy ?)
+     */
+    protected function httpGET(string $url): \aportela\HTTPRequestWrapper\HTTPResponse
+    {
+        try {
+            return ($this->http->GET($url));
+        } catch (\aportela\HTTPRequestWrapper\Exception\CurlExecException $e) {
+            $this->logger->error("Error opening URL " . $url, [$e->getCode(), $e->getMessage()]);
+            $this->incrementThrottle(); // sometimes api calls return connection error, interpret this as rate limit response
+            throw new \aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException("Error opening URL " . $url, 0, $e);
+        }
     }
 }

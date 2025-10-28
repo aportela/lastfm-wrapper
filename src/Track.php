@@ -25,6 +25,7 @@ class Track extends \aportela\LastFMWrapper\Entity
         $this->logger->debug("LastFMWrapper\Album::search", array("artist" => $artist, "track" => $track, "limit" => $limit, "apiURL" => $url));
         $response = $this->http->GET($url);
         if ($response->code == 200) {
+            $this->resetThrottle();
             $data = $this->parseHTTPResponseToObject($response->body);
             if (isset($data->{"results"}) && isset($data->{"results"}->{"opensearch:totalResults"}) && $data->{"results"}->{"opensearch:totalResults"} > 0) {
                 $results = [];
@@ -55,13 +56,21 @@ class Track extends \aportela\LastFMWrapper\Entity
 
     public function get(string $artist, string $track): void
     {
-        $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $this->apiFormat->value);
-        $this->logger->debug("LastFMWrapper\Track::get", array("artist" => $artist, "track" => $track, "apiURL" => $url));
-        $response = $this->http->GET($url);
-        if ($response->code == 200) {
-            $this->parse($response->body);
+        $cacheHash = md5("TRACK:" . trim($artist) . trim($track));
+        if (!$this->getCache($cacheHash)) {
+            $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $this->apiFormat->value);
+            $this->logger->debug("LastFMWrapper\Track::get", array("artist" => $artist, "track" => $track, "apiURL" => $url));
+            $response = $this->http->GET($url);
+            if ($response->code == 200) {
+                $this->resetThrottle();
+                $this->resetThrottle();
+                $this->saveCache($cacheHash, $response->body);
+                $this->parse($response->body);
+            } else {
+                throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $response->code);
+            }
         } else {
-            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - track: " . $track, $response->code);
+            $this->parse($this->raw);
         }
     }
 

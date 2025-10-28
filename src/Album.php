@@ -29,6 +29,7 @@ class Album extends \aportela\LastFMWrapper\Entity
         $this->logger->debug("LastFMWrapper\Album::search", array("artist" => $artist, "album" => $album, "limit" => $limit, "apiURL" => $url));
         $response = $this->http->GET($url);
         if ($response->code == 200) {
+            $this->resetThrottle();
             $data = $this->parseHTTPResponseToObject($response->body);
             if (isset($data->{"results"}) && isset($data->{"results"}->{"opensearch:totalResults"}) && $data->{"results"}->{"opensearch:totalResults"} > 0) {
                 $results = [];
@@ -59,13 +60,20 @@ class Album extends \aportela\LastFMWrapper\Entity
 
     public function get(string $artist, string $album): void
     {
-        $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($album), $this->apiKey, $this->apiFormat->value);
-        $this->logger->debug("LastFMWrapper\Album::get", array("artist" => $artist, "album" => $album, "apiURL" => $url));
-        $response = $this->http->GET($url);
-        if ($response->code == 200) {
-            $this->parse($response->body);
+        $cacheHash = md5("ALBUM:" . trim($artist) . trim($album));
+        if (!$this->getCache($cacheHash)) {
+            $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($album), $this->apiKey, $this->apiFormat->value);
+            $this->logger->debug("LastFMWrapper\Album::get", array("artist" => $artist, "album" => $album, "apiURL" => $url));
+            $response = $this->http->GET($url);
+            if ($response->code == 200) {
+                $this->resetThrottle();
+                $this->saveCache($cacheHash, $response->body);
+                $this->parse($response->body);
+            } else {
+                throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - album: " . $album, $response->code);
+            }
         } else {
-            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $artist . " - album: " . $album, $response->code);
+            $this->parse($this->raw);
         }
     }
 

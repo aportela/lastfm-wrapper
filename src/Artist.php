@@ -29,6 +29,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
         $this->logger->debug("LastFMWrapper\Artist::search", array("name" => $name, "limit" => $limit, "apiURL" => $url));
         $response = $this->http->GET($url);
         if ($response->code == 200) {
+            $this->resetThrottle();
             $data = $this->parseHTTPResponseToObject($response->body);
             if (isset($data->{"results"}) && isset($data->{"results"}->{"opensearch:totalResults"}) && $data->{"results"}->{"opensearch:totalResults"} > 0) {
                 $results = [];
@@ -59,13 +60,20 @@ class Artist extends \aportela\LastFMWrapper\Entity
 
     public function get(string $name): void
     {
-        $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey, $this->apiFormat->value);
-        $this->logger->debug("LastFMWrapper\Artist::get", array("name" => $name, "apiURL" => $url));
-        $response = $this->http->GET($url);
-        if ($response->code == 200) {
-            $this->parse($response->body);
+        $cacheHash = md5("ARTISTNAME:" . trim($name));
+        if (!$this->getCache($cacheHash)) {
+            $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey, $this->apiFormat->value);
+            $this->logger->debug("LastFMWrapper\Artist::get", array("name" => $name, "apiURL" => $url));
+            $response = $this->http->GET($url);
+            if ($response->code == 200) {
+                $this->resetThrottle();
+                $this->saveCache($cacheHash, $response->body);
+                $this->parse($response->body);
+            } else {
+                throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $name, $response->code);
+            }
         } else {
-            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $name, $response->code);
+            $this->parse($this->raw);
         }
     }
 
@@ -117,6 +125,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
         if (str_starts_with($artistPageURL, "https://www.last.fm/music/")) {
             $response = $this->http->GET($artistPageURL);
             if ($response->code == 200) {
+                $this->resetThrottle();
                 if (!empty($response->body)) {
                     $doc = new \DomDocument();
                     $doc->loadHTML($response->body);

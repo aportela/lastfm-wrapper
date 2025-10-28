@@ -11,6 +11,10 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     protected static \Psr\Log\NullLogger $logger;
     protected static ?string $lastFMAPIKey;
 
+    protected const THROTTLE_MS = 1000;
+
+    protected static string $cachePath;
+
     protected static mixed $jsonAPI;
     protected static mixed $xmlAPI;
 
@@ -21,6 +25,7 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     {
         self::$logger = new \Psr\Log\NullLogger();
         self::$lastFMAPIKey = getenv('LASTFM_API_KEY', true) ? getenv('LASTFM_API_KEY') : null;
+        self::$cachePath = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . "cache";
     }
 
     /**
@@ -37,16 +42,12 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     /**
      * Clean up the test case, called for every defined test
      */
-    public function tearDown(): void
-    {
-    }
+    public function tearDown(): void {}
 
     /**
      * Clean up the whole test class
      */
-    public static function tearDownAfterClass(): void
-    {
-    }
+    public static function tearDownAfterClass(): void {}
 
     public function testCheckEnvironmentApiKey(): void
     {
