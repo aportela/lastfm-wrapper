@@ -7,14 +7,14 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
     public function __construct(object $object)
     {
         $this->mbId = !empty($object->mbid) ? (string)$object->mbid : null;
-        $this->name = (string)$object->name;
-        $this->url = (string)$object->url;
+        $this->name = !empty($object->name) ? (string)$object->name : null;
+        $this->url = !empty($object->url) ? (string)$object->url : null;
         if (isset($object->image) && is_array(($object->image))) {
             foreach ($object->image as $image) {
                 $this->image[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\ImageHelper($image);
             }
         }
-        if (isset($object->tags) && isset($object->tags->tag) && is_array($object->tags->tag)) {
+        if (isset($object->tags) && isset($object->tags->tag)) {
             foreach ($object->tags->tag as $tag) {
                 $this->tags[] = mb_strtolower(trim($tag->name));
             }
@@ -27,9 +27,6 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
             }
         }
 
-        $this->bio = (object) array(
-            "summary" => isset($object->bio) && isset($object->bio->summary) ? (string) $object->bio->summary : null,
-            "content" => isset($object->bio) && isset($object->bio->content) ? (string) $object->bio->content : null,
-        );
+        $this->bio = isset($object->bio) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistBioHelper($object->bio) : null;
     }
 }

@@ -10,7 +10,7 @@ class Artist extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("artistmatches artist array not found");
         }
         $results = [];
-        if (is_array($this->json->results->artistmatches->artist)) {
+        if (isset($this->json->results->artistmatches->artist) && is_array($this->json->results->artistmatches->artist)) {
             foreach ($this->json->results->artistmatches->artist as $artistObject) {
                 $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper($artistObject);
             }
