@@ -2,13 +2,13 @@
 
 namespace aportela\LastFMWrapper\ParseHelpers;
 
-class TrackHelper
+class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\BaseHelper
 {
-    public ?string $mbId;
-    public ?string $name;
-    public ?string $url;
-    public \aportela\LastFMWrapper\ParseHelpers\ArtistHelper $artist;
-    public mixed $album;
+    public ?string $mbId = null;
+    public ?string $name = null;
+    public ?string $url = null;
+    public ?\aportela\LastFMWrapper\ParseHelpers\ArtistHelper $artist = null;
+    public ?\aportela\LastFMWrapper\ParseHelpers\AlbumHelper $album = null;
 
     /**
      * @var array<string>

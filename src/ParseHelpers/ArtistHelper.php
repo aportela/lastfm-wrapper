@@ -2,11 +2,11 @@
 
 namespace aportela\LastFMWrapper\ParseHelpers;
 
-class ArtistHelper
+class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\BaseHelper
 {
-    public ?string $mbId;
-    public string $name;
-    public string $url;
+    public ?string $mbId = null;
+    public ?string $name = null;
+    public ?string $url = null;
 
     /**
      * @var array<\aportela\LastFMWrapper\ParseHelpers\ImageHelper>
@@ -17,9 +17,11 @@ class ArtistHelper
      * @var array<string>
      */
     public array $tags = [];
+
     /**
-     * @var array<mixed>
+     * @var array<\aportela\LastFMWrapper\ParseHelpers\ArtistHelper>
      */
     public array $similar = [];
-    public mixed $bio;
+
+    public ?\aportela\LastFMWrapper\ParseHelpers\ArtistBioHelper $bio;
 }

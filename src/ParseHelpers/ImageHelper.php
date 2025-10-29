@@ -2,8 +2,8 @@
 
 namespace aportela\LastFMWrapper\ParseHelpers;
 
-class ImageHelper
+class ImageHelper extends \aportela\LastFMWrapper\ParseHelpers\BaseHelper
 {
-    public string $url;
-    public \aportela\LastFMWrapper\ImageSize $size;
+    public ?string $url = null;
+    public \aportela\LastFMWrapper\ImageSize $size = \aportela\LastFMWrapper\ImageSize::NONE;
 }
