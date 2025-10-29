@@ -6,16 +6,36 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
 {
     public function __construct(\SimpleXMLElement $element)
     {
-        $this->mbId = !empty($element->children()->mbid) ? (string)$element->children()->mbid : null;
-        $this->name = (string)$element->children()->name;
-        $this->url = (string)$element->children()->url;
-        $this->artist = new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($element->children()->artist);
-        $this->album = new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumHelper($element->children()->album);
-        if (isset($element->children()->toptags) && isset($element->children()->toptags->children()->tag)) {
-            foreach ($element->children()->toptags->children()->tag as $tag) {
-                $this->tags[] = mb_strtolower(trim($tag->children()->name));
+        $children = $element->children();
+        if ($children != null) {
+            $this->mbId = !empty($children->mbid) ? (string)$children->mbid : null;
+            $this->name = !empty($children->name) ? (string)$children->name : null;
+            $this->url = !empty($children->url) ? (string)$children->url : null;
+            if (isset($children->artist)) {
+                if ($children->artist->children()) {
+                    // Get Artist API (this returns artist as complete object)
+                    $this->artist = isset($children->artist) ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
+                } else {
+                    // Search Artist API (this returns artist name as string)
+                    if (! empty((string)$children->artist)) {
+                        $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
+                        $this->artist->name = (string)$children->artist;
+                    }
+                }
             }
-            $this->tags = array_unique($this->tags);
+            $this->album = isset($children->album) ? new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumHelper($children->album) : null;
+
+            if (isset($children->toptags)) {
+                $tags = $children->toptags->children()->tag;
+                if (isset($tags)) {
+                    foreach ($tags as $tag) {
+                        $this->tags[] = mb_strtolower(trim($tag->children()->name));
+                    }
+                    $this->tags = array_unique($this->tags);
+                }
+            }
+        } else {
+            throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("track element without children elements");
         }
     }
 }

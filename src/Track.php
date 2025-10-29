@@ -18,9 +18,9 @@ class Track extends \aportela\LastFMWrapper\Entity
         if ($response->code == 200) {
             $this->resetThrottle();
             if ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::XML) {
-                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Search\Album($response->body);
+                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Search\Track($response->body);
             } elseif ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON) {
-                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Search\Album($response->body);
+                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Search\Track($response->body);
             } else {
                 throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("");
             }
