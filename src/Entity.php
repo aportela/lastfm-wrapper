@@ -4,6 +4,8 @@ namespace aportela\LastFMWrapper;
 
 class Entity extends \aportela\LastFMWrapper\LastFM
 {
+    protected mixed $parser = null;
+
     public ?string $raw;
 
     private \aportela\LastFMWrapper\Cache $cache;
@@ -46,6 +48,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
         $this->raw = null;
     }
 
+    // TODO: REMOVE
     protected function parseHTTPResponseToObject(string $httpResponse): mixed
     {
         $data = null;

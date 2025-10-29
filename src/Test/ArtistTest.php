@@ -12,10 +12,6 @@ final class ArtistTest extends BaseTest
     private const string TEST_ARTIST_MBID = "d3b2711f-2baa-441a-be95-14945ca7e6ea";
     private const string TEST_ARTIST_URL = "https://www.last.fm/music/Roxette";
 
-    /*
-    private static $mbXML;
-    */
-
     /**
      * Called once just like normal constructor
      */
@@ -46,26 +42,36 @@ final class ArtistTest extends BaseTest
 
     public function testGetJson(): void
     {
-        self::$jsonAPI->get(self::TEST_ARTIST_NAME);
-        $this->assertSame(self::TEST_ARTIST_MBID, self::$jsonAPI->mbId);
-        $this->assertSame(self::TEST_ARTIST_NAME, self::$jsonAPI->name);
-        $this->assertSame(self::TEST_ARTIST_URL, self::$jsonAPI->url);
-        $this->assertIsArray(self::$jsonAPI->tags);
-        $this->assertIsArray(self::$jsonAPI->similar);
-        $this->assertNotEmpty(self::$jsonAPI->bio->summary);
-        $this->assertNotEmpty(self::$jsonAPI->bio->content);
+        $artist = null;
+        try {
+            $artist = self::$jsonAPI->get(self::TEST_ARTIST_NAME);
+        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $e) {
+            $this->markTestSkipped('API server connection error: ' . $e->getMessage());
+        }
+        $this->assertSame(self::TEST_ARTIST_MBID, $artist->mbId);
+        $this->assertSame(self::TEST_ARTIST_NAME, $artist->name);
+        $this->assertSame(self::TEST_ARTIST_URL, $artist->url);
+        $this->assertTrue(count($artist->tags) > 0);
+        $this->assertTrue(count($artist->similar) > 0);
+        $this->assertNotEmpty($artist->bio->summary);
+        $this->assertNotEmpty($artist->bio->content);
     }
 
     public function testGetXml(): void
     {
-        self::$xmlAPI->get(self::TEST_ARTIST_NAME);
-        $this->assertSame(self::TEST_ARTIST_MBID, self::$xmlAPI->mbId);
-        $this->assertSame(self::TEST_ARTIST_NAME, self::$xmlAPI->name);
-        $this->assertSame(self::TEST_ARTIST_URL, self::$xmlAPI->url);
-        $this->assertIsArray(self::$xmlAPI->tags);
-        $this->assertIsArray(self::$xmlAPI->similar);
-        $this->assertNotEmpty(self::$xmlAPI->bio->summary);
-        $this->assertNotEmpty(self::$xmlAPI->bio->content);
+        $artist = null;
+        try {
+            $artist = self::$xmlAPI->get(self::TEST_ARTIST_NAME);
+        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $e) {
+            $this->markTestSkipped('API server connection error: ' . $e->getMessage());
+        }
+        $this->assertSame(self::TEST_ARTIST_MBID, $artist->mbId);
+        $this->assertSame(self::TEST_ARTIST_NAME, $artist->name);
+        $this->assertSame(self::TEST_ARTIST_URL, $artist->url);
+        $this->assertTrue(count($artist->tags) > 0);
+        $this->assertTrue(count($artist->similar) > 0);
+        $this->assertNotEmpty($artist->bio->summary);
+        $this->assertNotEmpty($artist->bio->content);
     }
 
     public function testGetImageFromArtistPageUrl(): void
