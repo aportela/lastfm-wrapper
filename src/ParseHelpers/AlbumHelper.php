@@ -6,7 +6,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\BaseHelper
 {
     public ?string $mbId = null;
     public ?string $name = null;
-    public ?string $artist = null;
+    public ?\aportela\LastFMWrapper\ParseHelpers\ArtistHelper $artist = null;
     public ?string $url = null;
 
     /**

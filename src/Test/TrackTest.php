@@ -64,7 +64,7 @@ final class TrackTest extends BaseTest
         $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->artist->name);
         $this->assertSame(self::TEST_TRACK_ARTIST_URL, $track->artist->url);
         $this->assertSame(self::TEST_TRACK_ALBUM_NAME, $track->album->name);
-        $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->album->artist);
+        $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->album->artist->name);
         $this->assertSame(self::TEST_TRACK_ALBUM_URL, $track->album->url);
     }
 
@@ -83,7 +83,7 @@ final class TrackTest extends BaseTest
         $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->artist->name);
         $this->assertSame(self::TEST_TRACK_ARTIST_URL, $track->artist->url);
         $this->assertSame(self::TEST_TRACK_ALBUM_NAME, $track->album->name);
-        $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->album->artist);
+        $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->album->artist->name);
         $this->assertSame(self::TEST_TRACK_ALBUM_URL, $track->album->url);
     }
 }

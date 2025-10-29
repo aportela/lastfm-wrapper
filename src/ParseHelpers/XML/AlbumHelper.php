@@ -6,29 +6,53 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
 {
     public function __construct(\SimpleXMLElement $element)
     {
-        $this->mbId = !empty($element->children()->mbid) ? (string)$element->children()->mbid : null;
-        // WARNING: sometimes on album object/element of API responses name property is missing and replaced by title
-        // ex: track album details on getTrack API response
-        if (isset($element->children()->name)) {
-            $this->name = (string)$element->children()->name;
-        } else if (isset($element->children()->title)) {
-            $this->name = (string)$element->children()->title;
-        }
-        $this->artist = (string)$element->children()->artist;
-        $this->url = (string)$element->children()->url;
-        /*
-        if (isset($element->children()->image)) {
-            foreach ($element->children()->image as $image) {
-                $this->image[] = new \aportela\LastFMWrapper\ParseHelpers\XML\ImageHelper($image);
+        $children = $element->children();
+        if ($children != null) {
+            $this->mbId = !empty($children->mbid) ? (string)$children->mbid : null;
+            // WARNING: sometimes on album object/element of API responses name property is missing and replaced by title
+            // ex: track album details on getTrack API response
+            if (! empty($children->name)) {
+                $this->name = (string)$children->name;
+            } elseif (! empty($children->title)) {
+                $this->name = (string)$children->title;
+            } else {
+                throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("album name||title property not found");
             }
-        }
 
-        if (isset($element->tags) && isset($element->tags->tag)) {
-            foreach ($element->tags->tag as $tag) {
-                $this->tags[] = mb_strtolower(trim($tag->children()->name));
+            if (isset($children->artist)) {
+                if ($children->artist->children()) {
+                    // Get Artist API (this returns artist as complete object)
+                    $this->artist = isset($children->artist) ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
+                } else {
+                    // Search Artist API (this returns artist name as string)
+                    if (! empty((string)$children->artist)) {
+                        $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
+                        $this->artist->name = (string)$children->artist;
+                    }
+                }
             }
-            $this->tags = array_unique($this->tags);
+            $this->url = ! empty($children->url) ? (string)$children->url : null;
+
+            if (isset($children->tags)) {
+                $tags = $children->tags->children()->tag;
+                if (isset($tags)) {
+                    foreach ($tags as $tag) {
+                        $this->tags[] = mb_strtolower(trim($tag->children()->name));
+                    }
+                    $this->tags = array_unique($this->tags);
+                }
+            }
+
+            if (isset($children->tracks)) {
+                $tracks = $children->tracks->children()->track;
+                if (isset($tracks)) {
+                    foreach ($tracks as $track) {
+                        $this->tracks[] = new \aportela\LastFMWrapper\ParseHelpers\XML\TrackHelper($track);
+                    }
+                }
+            }
+        } else {
+            throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("album element without children elements");
         }
-            */
     }
 }

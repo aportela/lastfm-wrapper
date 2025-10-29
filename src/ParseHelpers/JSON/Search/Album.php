@@ -10,9 +10,9 @@ class Album extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("albummatches album array not found");
         }
         $results = [];
-        if (is_array($this->json->results->albummatches->artist)) {
-            foreach ($this->json->results->albummatches->artist as $artistObject) {
-                $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper($artistObject);
+        if (isset($this->json->results->albummatches->album) && is_array($this->json->results->albummatches->album)) {
+            foreach ($this->json->results->albummatches->album as $albumObject) {
+                $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper($albumObject);
             }
         }
         return ($results);

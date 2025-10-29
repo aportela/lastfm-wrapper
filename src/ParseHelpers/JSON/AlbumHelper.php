@@ -9,18 +9,39 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
         $this->mbId = !empty($object->mbid) ? (string)$object->mbid : null;
         // WARNING: sometimes on album object/element of API responses name property is missing and replaced by title
         // ex: track album details on getTrack API response
-        if (isset($object->name)) {
+        if (! empty($object->name)) {
             $this->name = (string)$object->name;
-        } else if (isset($object->title)) {
+        } elseif (! empty($object->title)) {
             $this->name = (string)$object->title;
+        } else {
+            throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("album name||title property not found");
         }
-        $this->artist = (string)$object->artist;
+        if (isset($object->artist)) {
+            switch (gettype($object->artist)) {
+                case "object":
+                    // Get Artist API (this returns artist as complete object)
+                    $this->artist = isset($object->artist) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper($object->artist) : null;
+                    break;
+                case "string":
+                    // Search Artist API (this returns artist name as string)
+                    if (! empty((string)$object->artist)) {
+                        $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
+                        $this->artist->name = (string)$object->artist;
+                    }
+                    break;
+            }
+        }
         $this->url = !empty($object->url) ? (string)$object->url : null;
         if (isset($object->tags) && isset($object->tags->tag) && is_array($object->tags->tag)) {
             foreach ($object->tags->tag as $tag) {
                 $this->tags[] = mb_strtolower(trim($tag->name));
             }
             $this->tags = array_unique($this->tags);
+        }
+        if (isset($object->tracks) && isset($object->tracks->track) && is_array($object->tracks->track)) {
+            foreach ($object->tracks->track as $track) {
+                $this->tracks[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\TrackHelper($track);
+            }
         }
     }
 }
