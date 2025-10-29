@@ -7,21 +7,6 @@ class Artist extends \aportela\LastFMWrapper\Entity
     private const SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=%s&api_key=%s&limit=%d&format=%s";
     private const GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=%s&api_key=%s&autocorrect=1&format=%s";
 
-    public ?string $mbId;
-    public ?string $name;
-
-    public ?string $url;
-
-    /**
-     * @var array<string>
-     */
-    public array $tags = [];
-    /**
-     * @var array<\aportela\LastFMWrapper\ParseHelpers\ArtistHelper>
-     */
-    public array $similar = [];
-    public mixed $bio;
-
     /**
      * @return array<\aportela\LastFMWrapper\ParseHelpers\ArtistHelper>
      */
