@@ -8,7 +8,7 @@ class Artist extends \aportela\LastFMWrapper\ParseHelpers\ParseXMLHelper
     {
         $artistsXPath = $this->getXPath("//lfm/results/artistmatches/artist");
         if ($artistsXPath === false) {
-            throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("artist-list xpath not found");
+            throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("artistmatches artist xpath not found");
         }
         $results = [];
         if (count($artistsXPath) > 0) {
