@@ -48,29 +48,39 @@ final class TrackTest extends BaseTest
 
     public function testGetJson(): void
     {
-        self::$jsonAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_TRACK_TITLE);
-        $this->assertSame(self::TEST_ARTIST_TRACK_TITLE, self::$jsonAPI->name);
-        $this->assertSame(self::TEST_ARTIST_TRACK_URL, self::$jsonAPI->url);
-        $this->assertSame(self::TEST_ARTIST_NAME, self::$jsonAPI->artist->name);
-        $this->assertSame(self::TEST_ARTIST_MBID, self::$jsonAPI->artist->mbId);
-        $this->assertSame(self::TEST_ARTIST_URL, self::$jsonAPI->artist->url);
-        $this->assertSame(self::TEST_ARTIST_NAME, self::$jsonAPI->album->artist);
-        $this->assertSame(self::TEST_ARTIST_ALBUM_NAME, self::$jsonAPI->album->title);
-        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, self::$jsonAPI->album->url);
-        $this->assertIsArray(self::$jsonAPI->tags);
+        $track = null;
+        try {
+            $track = self::$jsonAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_TRACK_TITLE);
+        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $e) {
+            $this->markTestSkipped('API server connection error: ' . $e->getMessage());
+        }
+        $this->assertSame(self::TEST_ARTIST_TRACK_TITLE, $track->name);
+        $this->assertSame(self::TEST_ARTIST_TRACK_URL, $track->url);
+        $this->assertSame(self::TEST_ARTIST_NAME, $track->artist->name);
+        $this->assertSame(self::TEST_ARTIST_MBID, $track->artist->mbId);
+        $this->assertSame(self::TEST_ARTIST_URL, $track->artist->url);
+        $this->assertSame(self::TEST_ARTIST_NAME, $track->album->artist);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_NAME, $track->album->name);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, $track->album->url);
+        $this->assertIsArray($track->tags);
     }
 
     public function testGetXml(): void
     {
-        self::$xmlAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_TRACK_TITLE);
-        $this->assertSame(self::TEST_ARTIST_TRACK_TITLE, self::$xmlAPI->name);
-        $this->assertSame(self::TEST_ARTIST_TRACK_URL, self::$xmlAPI->url);
-        $this->assertSame(self::TEST_ARTIST_NAME, self::$xmlAPI->artist->name);
-        $this->assertSame(self::TEST_ARTIST_MBID, self::$xmlAPI->artist->mbId);
-        $this->assertSame(self::TEST_ARTIST_URL, self::$xmlAPI->artist->url);
-        $this->assertSame(self::TEST_ARTIST_NAME, self::$xmlAPI->album->artist);
-        $this->assertSame(self::TEST_ARTIST_ALBUM_NAME, self::$xmlAPI->album->title);
-        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, self::$xmlAPI->album->url);
-        $this->assertIsArray(self::$xmlAPI->tags);
+        $track = null;
+        try {
+            $track = self::$xmlAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_TRACK_TITLE);
+        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $e) {
+            $this->markTestSkipped('API server connection error: ' . $e->getMessage());
+        }
+        $this->assertSame(self::TEST_ARTIST_TRACK_TITLE, $track->name);
+        $this->assertSame(self::TEST_ARTIST_TRACK_URL, $track->url);
+        $this->assertSame(self::TEST_ARTIST_NAME, $track->artist->name);
+        $this->assertSame(self::TEST_ARTIST_MBID, $track->artist->mbId);
+        $this->assertSame(self::TEST_ARTIST_URL, $track->artist->url);
+        $this->assertSame(self::TEST_ARTIST_NAME, $track->album->artist);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_NAME, $track->album->name);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, $track->album->url);
+        $this->assertIsArray($track->tags);
     }
 }

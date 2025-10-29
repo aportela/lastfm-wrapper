@@ -43,21 +43,31 @@ final class AlbumTest extends BaseTest
 
     public function testGetJson(): void
     {
-        self::$jsonAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_ALBUM_NAME);
-        $this->assertSame(self::TEST_ARTIST_ALBUM_MBID, self::$jsonAPI->mbId);
-        $this->assertSame(self::TEST_ARTIST_NAME, self::$jsonAPI->name);
-        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, self::$jsonAPI->url);
-        $this->assertIsArray(self::$jsonAPI->tags);
-        $this->assertIsArray(self::$jsonAPI->tracks);
+        $album = null;
+        try {
+            $album = self::$jsonAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_ALBUM_NAME);
+        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $e) {
+            $this->markTestSkipped('API server connection error: ' . $e->getMessage());
+        }
+        $this->assertSame(self::TEST_ARTIST_ALBUM_MBID, $album->mbId);
+        $this->assertSame(self::TEST_ARTIST_NAME, $album->name);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, $album->url);
+        $this->assertIsArray($album->tags);
+        $this->assertIsArray($album->tracks);
     }
 
     public function testGetXml(): void
     {
-        self::$xmlAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_ALBUM_NAME);
-        $this->assertSame(self::TEST_ARTIST_ALBUM_MBID, self::$xmlAPI->mbId);
-        $this->assertSame(self::TEST_ARTIST_NAME, self::$xmlAPI->name);
-        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, self::$xmlAPI->url);
-        $this->assertIsArray(self::$xmlAPI->tags);
-        $this->assertIsArray(self::$xmlAPI->tracks);
+        $album = null;
+        try {
+            $album = self::$xmlAPI->get(self::TEST_ARTIST_NAME, self::TEST_ARTIST_ALBUM_NAME);
+        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $e) {
+            $this->markTestSkipped('API server connection error: ' . $e->getMessage());
+        }
+        $this->assertSame(self::TEST_ARTIST_ALBUM_MBID, $album->mbId);
+        $this->assertSame(self::TEST_ARTIST_NAME, $album->name);
+        $this->assertSame(self::TEST_ARTIST_ALBUM_URL, $album->url);
+        $this->assertIsArray($album->tags);
+        $this->assertIsArray($album->tracks);
     }
 }

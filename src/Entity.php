@@ -48,27 +48,6 @@ class Entity extends \aportela\LastFMWrapper\LastFM
         $this->raw = null;
     }
 
-    // TODO: REMOVE
-    protected function parseHTTPResponseToObject(string $httpResponse): mixed
-    {
-        $data = null;
-        switch ($this->apiFormat) {
-            case \aportela\LastFMWrapper\APIFormat::JSON:
-                $data = json_decode($httpResponse);
-                if (json_last_error() != JSON_ERROR_NONE) {
-                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("invalid json");
-                }
-                break;
-            case \aportela\LastFMWrapper\APIFormat::XML:
-                $data = simplexml_load_string($httpResponse);
-                if ($data === false) {
-                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("invalid xml");
-                }
-                break;
-        }
-        return ($data);
-    }
-
     /**
      * increment throttle delay (time between api calls)
      * call this function when api returns rate limit exception
