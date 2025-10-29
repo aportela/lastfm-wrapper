@@ -30,8 +30,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
             } else {
                 throw new \aportela\LastFMWrapper\Exception\NotFoundException("artist name: {$name}", 0);
             }
+        } elseif ($response->code == 503) {
+            $this->incrementThrottle();
+            throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist name: {$name}", $response->code);
         } else {
-            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist:" . $name, $response->code);
+            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist name: {$name}", $response->code);
         }
     }
 
@@ -46,8 +49,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
                 $this->resetThrottle();
                 $this->saveCache($cacheHash, $response->body);
                 return ($this->parse($response->body));
+            } elseif ($response->code == 503) {
+                $this->incrementThrottle();
+                throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: {$name}", $response->code);
             } else {
-                throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: " . $name, $response->code);
+                throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: {$name}", $response->code);
             }
         } else {
             return ($this->parse($this->raw));
