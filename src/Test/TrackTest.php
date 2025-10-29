@@ -18,11 +18,6 @@ final class TrackTest extends BaseTest
     private const string TEST_ARTIST_TRACK_TITLE = "Silver Blue";
     private const string TEST_ARTIST_TRACK_URL = "https://www.last.fm/music/Roxette/_/Silver+Blue";
 
-
-    /*
-    private static $mbXML;
-    */
-
     /**
      * Called once just like normal constructor
      */

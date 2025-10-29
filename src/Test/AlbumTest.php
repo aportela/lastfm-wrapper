@@ -13,10 +13,6 @@ final class AlbumTest extends BaseTest
     private const string TEST_ARTIST_ALBUM_NAME = "Tourism";
     private const string TEST_ARTIST_ALBUM_URL = "https://www.last.fm/music/Roxette/Tourism";
 
-    /*
-    private static $mbXML;
-    */
-
     /**
      * Called once just like normal constructor
      */
