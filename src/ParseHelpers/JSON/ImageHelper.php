@@ -6,7 +6,7 @@ class ImageHelper extends \aportela\LastFMWrapper\ParseHelpers\ImageHelper
 {
     public function __construct(object $object)
     {
-        $this->url = (string) $object->{"#text"};
-        $this->size = \aportela\LastFMWrapper\ImageSize::fromString((string) $object->size);
+        $this->url = !empty($object->{"#text"}) ? (string) $object->{"#text"} : null;
+        $this->size =  !empty($object->size) ? \aportela\LastFMWrapper\ImageSize::fromString((string) $object->size) : \aportela\LastFMWrapper\ImageSize::NONE;
     }
 }
