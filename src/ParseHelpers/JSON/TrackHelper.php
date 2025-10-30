@@ -6,6 +6,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
 {
     public function __construct(object $object)
     {
+        $this->rank = isset($object->{"@attr"}) && isset($object->{"@attr"}->rank) ? intval($object->{"@attr"}->rank) : null;
         $this->mbId = !empty($object->mbid) ? (string)$object->mbid : null;
         $this->name = !empty($object->name) ? (string)$object->name : null;
         $this->url = !empty($object->url) ? (string)$object->url : null;

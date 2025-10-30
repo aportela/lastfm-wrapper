@@ -63,6 +63,10 @@ final class AlbumTest extends BaseTest
         $this->assertSame(self::TEST_ALBUM_URL, $album->url);
         $this->assertTrue(count($album->tags) > 0);
         $this->assertCount(self::TEST_ALBUM_TRACK_COUNT, $album->tracks);
+        $totalTracks = count($album->tracks);
+        for ($i = 0; $i < $totalTracks; $i++) {
+            $this->assertSame($i + 1, $album->tracks[$i]->rank);
+        }
     }
 
     public function testGetXml(): void
@@ -79,5 +83,9 @@ final class AlbumTest extends BaseTest
         $this->assertSame(self::TEST_ALBUM_URL, $album->url);
         $this->assertTrue(count($album->tags) > 0);
         $this->assertCount(self::TEST_ALBUM_TRACK_COUNT, $album->tracks);
+        $totalTracks = count($album->tracks);
+        for ($i = 0; $i < $totalTracks; $i++) {
+            $this->assertSame($i + 1, $album->tracks[$i]->rank);
+        }
     }
 }

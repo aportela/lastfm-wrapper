@@ -8,6 +8,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
     {
         $children = $element->children();
         if ($children != null) {
+            $this->rank = isset($element->attributes()->rank) ? intval($element->attributes()->rank) : null;
             $this->mbId = !empty($children->mbid) ? (string)$children->mbid : null;
             $this->name = !empty($children->name) ? (string)$children->name : null;
             $this->url = !empty($children->url) ? (string)$children->url : null;
