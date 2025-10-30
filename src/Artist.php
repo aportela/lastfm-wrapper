@@ -90,14 +90,17 @@ class Artist extends \aportela\LastFMWrapper\Entity
                         $xpath = new \DOMXPath($doc);
                         $query = '//*/meta[starts-with(@property, \'og:\')]';
                         $metas = $xpath->query($query);
-                        foreach ($metas as $meta) {
-                            if ($meta instanceof \DOMElement && $meta->getAttribute('property') == 'og:image') {
-                                $imageURL = $meta->getAttribute('content');
-                                break;
+                        if ($metas !== false) {
+                            for ($i = 0; $i < $metas->length; $i++) {
+                                $meta = $metas->item($i);
+                                if ($meta instanceof \DOMElement && $meta->getAttribute('property') == 'og:image') {
+                                    $imageURL = $meta->getAttribute('content');
+                                    break;
+                                }
                             }
-                        }
-                        if (! empty($imageURL)) {
-                            $this->saveCache($cacheHash, $imageURL);
+                            if (! empty($imageURL)) {
+                                $this->saveCache($cacheHash, $imageURL);
+                            }
                         }
                         return ($imageURL);
                     } else {

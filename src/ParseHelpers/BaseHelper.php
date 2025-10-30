@@ -7,9 +7,15 @@ class BaseHelper
     public function parseDateToYear(?string $date): ?int
     {
         if ($date !== null) {
-            switch (mb_strlen($date)) {
+            switch (mb_strlen(mb_trim($date))) {
                 case 10:
-                    return (intval(date_format(date_create_from_format('Y-m-d', $date), 'Y')));
+                    $dateObj = date_create_from_format('Y-m-d', $date);
+                    if ($dateObj !== false) {
+                        return (intval(date_format($dateObj, 'Y')));
+                    } else {
+                        return (null);
+                    }
+                    // no break
                 case 4:
                     return (intval($date));
                 default:

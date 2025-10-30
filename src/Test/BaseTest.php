@@ -24,7 +24,7 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     public static function setUpBeforeClass(): void
     {
         self::$logger = new \Psr\Log\NullLogger();
-        self::$lastFMAPIKey = getenv('LASTFM_API_KEY', true) ? getenv('LASTFM_API_KEY') : null;
+        self::$lastFMAPIKey = getenv('LASTFM_API_KEY', true) ? (string) getenv('LASTFM_API_KEY') : null;
         self::$cachePath = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . "cache";
     }
 
