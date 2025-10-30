@@ -51,6 +51,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                     }
                 }
             }
+            $this->wiki = isset($children->wiki) ? new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumWikiHelper($children->wiki) : null;
         } else {
             throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("album element without children elements");
         }

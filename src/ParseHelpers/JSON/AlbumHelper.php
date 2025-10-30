@@ -43,5 +43,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                 $this->tracks[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\TrackHelper($track);
             }
         }
+
+        $this->wiki = isset($object->wiki) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumWikiHelper($object->wiki) : null;
     }
 }

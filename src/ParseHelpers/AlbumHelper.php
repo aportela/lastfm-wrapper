@@ -18,4 +18,6 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\BaseHelper
      * @var array<\aportela\LastFMWrapper\ParseHelpers\TrackHelper>
      */
     public array $tracks = [];
+
+    public ?\aportela\LastFMWrapper\ParseHelpers\AlbumWikiHelper $wiki = null;
 }
