@@ -23,5 +23,5 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\BaseHelper
      */
     public array $similar = [];
 
-    public ?\aportela\LastFMWrapper\ParseHelpers\ArtistBioHelper $bio;
+    public ?\aportela\LastFMWrapper\ParseHelpers\ArtistBioHelper $bio = null;
 }
