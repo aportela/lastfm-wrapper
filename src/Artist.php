@@ -76,7 +76,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
 
     public function getImageFromArtistPageURL(string $artistPageURL): ?string
     {
-        $cacheHash = md5("ARTISTIMAGEURL:" . trim($artistPageURL));
+        $cacheHash = md5("ARTISTIMAGEURL:" . mb_trim($artistPageURL));
         $imageURL = null;
         $this->logger->debug("LastFMWrapper\Artist::getImageFromArtistPageURL", array("url" => $artistPageURL));
         if (str_starts_with($artistPageURL, "https://www.last.fm/music/")) {

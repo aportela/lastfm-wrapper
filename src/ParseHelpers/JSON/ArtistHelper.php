@@ -16,7 +16,7 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
         }
         if (isset($object->tags) && isset($object->tags->tag)) {
             foreach ($object->tags->tag as $tag) {
-                $this->tags[] = mb_strtolower(trim($tag->name));
+                $this->tags[] = mb_strtolower(mb_trim($tag->name));
             }
             $this->tags = array_unique($this->tags);
         }

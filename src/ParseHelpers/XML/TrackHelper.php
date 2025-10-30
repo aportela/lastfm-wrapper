@@ -29,7 +29,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
                 $tags = $children->toptags->children()->tag;
                 if (isset($tags)) {
                     foreach ($tags as $tag) {
-                        $this->tags[] = mb_strtolower(trim($tag->children()->name));
+                        $this->tags[] = mb_strtolower(mb_trim($tag->children()->name));
                     }
                     $this->tags = array_unique($this->tags);
                 }
