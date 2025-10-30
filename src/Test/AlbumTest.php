@@ -14,6 +14,9 @@ final class AlbumTest extends BaseTest
     private const string TEST_ALBUM_URL = "https://www.last.fm/music/Roxette/Tourism";
     private const string TEST_ALBUM_ARTIST_NAME = "Roxette";
 
+    private static \aportela\LastFMWrapper\Album $jsonAPI;
+    private static \aportela\LastFMWrapper\Album $xmlAPI;
+
     /**
      * Called once just like normal constructor
      */
@@ -21,8 +24,8 @@ final class AlbumTest extends BaseTest
     {
         parent::setUpBeforeClass();
         if (! empty(self::$lastFMAPIKey)) {
-            self::$jsonAPI = new \aportela\LastFMWrapper\Album(self::$logger, \aportela\LastFMWrapper\APIFormat::JSON, self::$lastFMAPIKey ?? "", self::THROTTLE_MS, self::$cachePath);
-            self::$xmlAPI = new \aportela\LastFMWrapper\Album(self::$logger, \aportela\LastFMWrapper\APIFormat::XML, self::$lastFMAPIKey ?? "", self::THROTTLE_MS, self::$cachePath);
+            self::$jsonAPI = new \aportela\LastFMWrapper\Album(self::$logger, \aportela\LastFMWrapper\APIFormat::JSON, self::$lastFMAPIKey ?? "", \aportela\LastFMWrapper\Entity::DEFAULT_THROTTLE_DELAY_MS, self::$cachePath);
+            self::$xmlAPI = new \aportela\LastFMWrapper\Album(self::$logger, \aportela\LastFMWrapper\APIFormat::XML, self::$lastFMAPIKey ?? "", \aportela\LastFMWrapper\Entity::DEFAULT_THROTTLE_DELAY_MS, self::$cachePath);
         }
     }
 

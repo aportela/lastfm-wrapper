@@ -11,12 +11,9 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     protected static \Psr\Log\NullLogger $logger;
     protected static ?string $lastFMAPIKey;
 
-    protected const THROTTLE_MS = 1000;
+    protected const THROTTLE_MS = \aportela\LastFMWrapper\Entity::DEFAULT_THROTTLE_DELAY_MS;
 
     protected static string $cachePath;
-
-    protected static mixed $jsonAPI;
-    protected static mixed $xmlAPI;
 
     /**
      * Called once just like normal constructor

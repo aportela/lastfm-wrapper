@@ -4,7 +4,10 @@ namespace aportela\LastFMWrapper\ParseHelpers\JSON\Search;
 
 class Album extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
 {
-    public function parse(): mixed
+    /**
+     * @return array<\aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper>
+     */
+    public function parse(): array
     {
         if (! (isset($this->json->results) && isset($this->json->results->albummatches))) {
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("albummatches album array not found");

@@ -4,7 +4,7 @@ namespace aportela\LastFMWrapper\ParseHelpers\JSON\Get;
 
 class Track extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
 {
-    public function parse(): mixed
+    public function parse(): \aportela\LastFMWrapper\ParseHelpers\JSON\TrackHelper
     {
         if (isset($this->json->track)) {
             return (new \aportela\LastFMWrapper\ParseHelpers\JSON\TrackHelper($this->json->track));

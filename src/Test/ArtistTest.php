@@ -12,6 +12,9 @@ final class ArtistTest extends BaseTest
     private const string TEST_ARTIST_MBID = "d3b2711f-2baa-441a-be95-14945ca7e6ea";
     private const string TEST_ARTIST_URL = "https://www.last.fm/music/Roxette";
 
+    private static \aportela\LastFMWrapper\Artist $jsonAPI;
+    private static \aportela\LastFMWrapper\Artist $xmlAPI;
+
     /**
      * Called once just like normal constructor
      */
@@ -19,8 +22,8 @@ final class ArtistTest extends BaseTest
     {
         parent::setUpBeforeClass();
         if (! empty(self::$lastFMAPIKey)) {
-            self::$jsonAPI = new \aportela\LastFMWrapper\Artist(self::$logger, \aportela\LastFMWrapper\APIFormat::JSON, self::$lastFMAPIKey ?? "", self::THROTTLE_MS, self::$cachePath);
-            self::$xmlAPI = new \aportela\LastFMWrapper\Artist(self::$logger, \aportela\LastFMWrapper\APIFormat::XML, self::$lastFMAPIKey ?? "", self::THROTTLE_MS, self::$cachePath);
+            self::$jsonAPI = new \aportela\LastFMWrapper\Artist(self::$logger, \aportela\LastFMWrapper\APIFormat::JSON, self::$lastFMAPIKey ?? "", \aportela\LastFMWrapper\Entity::DEFAULT_THROTTLE_DELAY_MS, self::$cachePath);
+            self::$xmlAPI = new \aportela\LastFMWrapper\Artist(self::$logger, \aportela\LastFMWrapper\APIFormat::XML, self::$lastFMAPIKey ?? "", \aportela\LastFMWrapper\Entity::DEFAULT_THROTTLE_DELAY_MS, self::$cachePath);
         }
     }
 

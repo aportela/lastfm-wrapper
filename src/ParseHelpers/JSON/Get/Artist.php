@@ -4,7 +4,7 @@ namespace aportela\LastFMWrapper\ParseHelpers\JSON\Get;
 
 class Artist extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
 {
-    public function parse(): mixed
+    public function parse(): \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper
     {
         if (isset($this->json->artist)) {
             return (new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper($this->json->artist));

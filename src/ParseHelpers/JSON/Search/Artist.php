@@ -4,7 +4,10 @@ namespace aportela\LastFMWrapper\ParseHelpers\JSON\Search;
 
 class Artist extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
 {
-    public function parse(): mixed
+    /**
+     * @return array<\aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper>
+     */
+    public function parse(): array
     {
         if (! (isset($this->json->results) && isset($this->json->results->artistmatches))) {
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("artistmatches artist array not found");

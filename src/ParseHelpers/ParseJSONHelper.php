@@ -2,7 +2,7 @@
 
 namespace aportela\LastFMWrapper\ParseHelpers;
 
-abstract class ParseJSONHelper
+class ParseJSONHelper
 {
     protected mixed $json;
 
@@ -13,6 +13,4 @@ abstract class ParseJSONHelper
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException(json_last_error_msg(), json_last_error());
         }
     }
-
-    abstract public function parse(): mixed;
 }

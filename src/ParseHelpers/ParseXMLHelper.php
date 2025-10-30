@@ -2,7 +2,7 @@
 
 namespace aportela\LastFMWrapper\ParseHelpers;
 
-abstract class ParseXMLHelper
+class ParseXMLHelper
 {
     protected mixed $xml;
 
@@ -23,10 +23,15 @@ abstract class ParseXMLHelper
         }
     }
 
-    protected function getXPath(string $path): mixed
+    /**
+     * @return array<\SimpleXMLElement>|null|false
+     */
+    protected function getXPath(string $path): array|null|false
     {
-        return ($this->xml->xpath($path));
+        if (is_object($this->xml)) {
+            return ($this->xml->xpath($path));
+        } else {
+            return (false);
+        }
     }
-
-    abstract public function parse(): mixed;
 }
