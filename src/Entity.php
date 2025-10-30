@@ -127,6 +127,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function httpGET(string $url): \aportela\HTTPRequestWrapper\HTTPResponse
     {
+        $this->logger->debug("Opening url: {$url}");
         try {
             return ($this->http->GET($url));
         } catch (\aportela\HTTPRequestWrapper\Exception\CurlExecException $e) {
