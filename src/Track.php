@@ -40,7 +40,7 @@ class Track extends \aportela\LastFMWrapper\Entity
 
     public function get(string $artist, string $track): \aportela\LastFMWrapper\ParseHelpers\TrackHelper
     {
-        $cacheHash = md5("TRACK:" . trim($artist) . trim($track));
+        $cacheHash = md5("TRACK:" . mb_strtolower(mb_trim($artist)) . mb_strtolower(mb_trim($track)));
         if (!$this->getCache($cacheHash)) {
             $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $this->apiFormat->value);
             $this->logger->debug("LastFMWrapper\Track::get", array("artist" => $artist, "track" => $track, "apiURL" => $url));

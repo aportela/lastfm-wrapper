@@ -40,7 +40,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
 
     public function get(string $name): \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
     {
-        $cacheHash = md5("ARTISTNAME:" . trim($name));
+        $cacheHash = md5("ARTISTNAME:" . mb_strtolower(mb_trim($name)));
         if (!$this->getCache($cacheHash)) {
             $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey, $this->apiFormat->value);
             $this->logger->debug("LastFMWrapper\Artist::get", array("name" => $name, "apiURL" => $url));

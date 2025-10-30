@@ -40,7 +40,7 @@ class Album extends \aportela\LastFMWrapper\Entity
 
     public function get(string $artist, string $album): \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
     {
-        $cacheHash = md5("ALBUM:" . trim($artist) . trim($album));
+        $cacheHash = md5("ALBUM:" . mb_strtolower(mb_trim($artist)) . mb_strtolower(mb_trim($album)));
         if (!$this->getCache($cacheHash)) {
             $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($album), $this->apiKey, $this->apiFormat->value);
             $this->logger->debug("LastFMWrapper\Album::get", array("artist" => $artist, "album" => $album, "apiURL" => $url));
