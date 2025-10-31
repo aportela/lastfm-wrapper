@@ -71,7 +71,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
             throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("");
         }
         $this->raw = $rawText;
-        return ($this->parser->parse());
+        $artist = $this->parser->parse();
+        if (! empty($artist->url)) {
+            $artist->image = $this->getImageFromArtistPageURL($artist->url);
+        }
+        return ($artist);
     }
 
     public function getImageFromArtistPageURL(string $artistPageURL): ?string

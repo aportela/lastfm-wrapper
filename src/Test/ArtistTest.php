@@ -60,6 +60,7 @@ final class ArtistTest extends BaseTest
         $this->assertSame(self::TEST_ARTIST_MBID, $artist->mbId);
         $this->assertSame(self::TEST_ARTIST_NAME, $artist->name);
         $this->assertSame(self::TEST_ARTIST_URL, $artist->url);
+        $this->assertNotEmpty($artist->image);
         $this->assertTrue(count($artist->tags) > 0);
         $this->assertTrue(count($artist->similar) > 0);
         $this->assertNotEmpty($artist->bio->summary);
@@ -77,6 +78,7 @@ final class ArtistTest extends BaseTest
         $this->assertSame(self::TEST_ARTIST_MBID, $artist->mbId);
         $this->assertSame(self::TEST_ARTIST_NAME, $artist->name);
         $this->assertSame(self::TEST_ARTIST_URL, $artist->url);
+        $this->assertNotEmpty($artist->image);
         $this->assertTrue(count($artist->tags) > 0);
         $this->assertTrue(count($artist->similar) > 0);
         $this->assertNotEmpty($artist->bio->summary);

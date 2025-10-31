@@ -9,11 +9,7 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
         $this->mbId = !empty($object->mbid) ? (string)$object->mbid : null;
         $this->name = !empty($object->name) ? (string)$object->name : null;
         $this->url = !empty($object->url) ? (string)$object->url : null;
-        if (isset($object->image) && is_array(($object->image))) {
-            foreach ($object->image as $image) {
-                $this->image[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\ImageHelper($image);
-            }
-        }
+
         if (isset($object->tags) && isset($object->tags->tag)) {
             foreach ($object->tags->tag as $tag) {
                 $this->tags[] = mb_strtolower(mb_trim($tag->name));
