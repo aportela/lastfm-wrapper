@@ -11,11 +11,6 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
             $this->mbId = !empty($children->mbid) ? (string)$children->mbid : null;
             $this->name = !empty($children->name) ? (string)$children->name : null;
             $this->url = !empty($children->url) ? (string)$children->url : null;
-            if (isset($children->image)) {
-                foreach ($children->image as $image) {
-                    $this->image[] = new \aportela\LastFMWrapper\ParseHelpers\XML\ImageHelper($image);
-                }
-            }
 
             if (isset($children->tags)) {
                 $tags = $children->tags->children()->tag;
