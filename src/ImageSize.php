@@ -11,18 +11,6 @@ enum ImageSize: string
     case EXTRA_LARGE = "extralarge";
     case MEGA = "mega";
 
-    public function toString(): string
-    {
-        return match ($this) {
-            self::NONE => "",
-            self::SMALL => "small",
-            self::MEDIUM => "medium",
-            self::LARGE => "large",
-            self::EXTRA_LARGE => "extralarge",
-            self::MEGA => "mega",
-        };
-    }
-
     public static function fromString(string $value): ImageSize
     {
         return match ($value) {
