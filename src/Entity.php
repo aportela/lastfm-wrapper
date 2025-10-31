@@ -8,7 +8,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
 
     public ?string $raw;
 
-    private \aportela\LastFMWrapper\Cache $cache;
+    private \aportela\SimpleFSCache\Cache $cache;
 
     /**
      * https://www.last.fm/api/intro
@@ -24,7 +24,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     protected ?string $cachePath = null;
     protected bool $refreshExistingCache = false;
 
-    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS, ?string $cachePath = null, bool $refreshExistingCache = false)
+    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, \aportela\SimpleFSCache\Cache $cache, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS)
     {
         parent::__construct($logger, $apiFormat, $apiKey);
         $this->logger->debug("LastFMWrapper\Entity::__construct");
@@ -34,8 +34,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
         $this->originalThrottleDelayMS = $throttleDelayMS;
         $this->currentThrottleDelayMS = $throttleDelayMS;
         $this->lastThrottleTimestamp = intval(microtime(true) * 1000);
-        $this->cache = new \aportela\LastFMWrapper\Cache($logger, $apiFormat, $cachePath);
-        $this->refreshExistingCache = $refreshExistingCache;
+        $this->cache = $cache;
         $this->reset();
     }
 
@@ -92,7 +91,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function saveCache(string $mbId, string $raw): bool
     {
-        return ($this->cache->saveCache($mbId, $raw));
+        return ($this->cache->save($mbId, $raw));
     }
 
     /**
@@ -100,7 +99,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function removeCache(string $mbId): bool
     {
-        return ($this->cache->removeCache($mbId));
+        return ($this->cache->remove($mbId));
     }
 
     /**
@@ -108,17 +107,12 @@ class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function getCache(string $mbId): bool
     {
-        $this->raw = null;
-        // this is used for refreshing current stored cache (cache load always return false, for getting again && save after getting new data)
-        if ($this->refreshExistingCache) {
-            return (false);
+        $this->reset();
+        if ($cache = $this->cache->get($mbId)) {
+            $this->raw = $cache;
+            return (true);
         } else {
-            if ($cache = $this->cache->getCache($mbId)) {
-                $this->raw = $cache;
-                return (true);
-            } else {
-                return (false);
-            }
+            return (false);
         }
     }
 
