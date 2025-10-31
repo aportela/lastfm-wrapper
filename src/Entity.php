@@ -21,7 +21,6 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     private int $currentThrottleDelayMS = 0;
     private int $lastThrottleTimestamp = 0;
 
-    protected ?string $cachePath = null;
     protected bool $refreshExistingCache = false;
 
     public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS, ?string $cachePath = null, bool $refreshExistingCache = false)
