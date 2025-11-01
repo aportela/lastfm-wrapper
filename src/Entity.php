@@ -8,7 +8,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
 
     public ?string $raw;
 
-    private \aportela\SimpleFSCache\Cache $cache;
+    private ?\aportela\SimpleFSCache\Cache $cache = null;
 
     /**
      * https://www.last.fm/api/intro
@@ -23,7 +23,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
 
     protected bool $refreshExistingCache = false;
 
-    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, \aportela\SimpleFSCache\Cache $cache, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS)
+    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, ?\aportela\SimpleFSCache\Cache $cache = null, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS)
     {
         parent::__construct($logger, $apiFormat, $apiKey);
         $this->logger->debug("LastFMWrapper\Entity::__construct");
@@ -90,7 +90,11 @@ class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function saveCache(string $mbId, string $raw): bool
     {
-        return ($this->cache->save($mbId, $raw));
+        if ($this->cache !== null) {
+            return ($this->cache->save($mbId, $raw));
+        } else {
+            return (false);
+        }
     }
 
     /**
@@ -98,7 +102,11 @@ class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function removeCache(string $mbId): bool
     {
-        return ($this->cache->remove($mbId));
+        if ($this->cache !== null) {
+            return ($this->cache->remove($mbId));
+        } else {
+            return (false);
+        }
     }
 
     /**
@@ -107,9 +115,13 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     protected function getCache(string $mbId): bool
     {
         $this->reset();
-        if ($cache = $this->cache->get($mbId)) {
-            $this->raw = $cache;
-            return (true);
+        if ($this->cache !== null) {
+            if ($cache = $this->cache->get($mbId)) {
+                $this->raw = $cache;
+                return (true);
+            } else {
+                return (false);
+            }
         } else {
             return (false);
         }
