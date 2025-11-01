@@ -42,11 +42,11 @@ class Track extends \aportela\LastFMWrapper\Entity
     {
         $cacheHash = md5("TRACK:" . mb_strtolower(mb_trim($artist)) . mb_strtolower(mb_trim($track)));
         if (!$this->getCache($cacheHash)) {
+            $this->checkThrottle();
             $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $this->apiFormat->value);
             $this->logger->debug("LastFMWrapper\Track::get", array("artist" => $artist, "track" => $track, "apiURL" => $url));
             $response = $this->http->GET($url);
             if ($response->code == 200) {
-                $this->resetThrottle();
                 $this->resetThrottle();
                 $this->saveCache($cacheHash, $response->body);
                 return ($this->parse($response->body));

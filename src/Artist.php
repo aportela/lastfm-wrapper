@@ -12,6 +12,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
      */
     public function search(string $name, int $limit = 1): array
     {
+        $this->checkThrottle();
         $url = sprintf(self::SEARCH_API_URL, urlencode($name), $this->apiKey, $limit, $this->apiFormat->value);
         $this->logger->debug("LastFMWrapper\Artist::search", array("name" => $name, "limit" => $limit, "apiURL" => $url));
         $response = $this->httpGET($url);
@@ -42,6 +43,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
     {
         $cacheHash = md5("ARTISTNAME:" . mb_strtolower(mb_trim($name)));
         if (!$this->getCache($cacheHash)) {
+            $this->checkThrottle();
             $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey, $this->apiFormat->value);
             $this->logger->debug("LastFMWrapper\Artist::get", array("name" => $name, "apiURL" => $url));
             $response = $this->httpGET($url);
@@ -87,7 +89,6 @@ class Artist extends \aportela\LastFMWrapper\Entity
             if (!$this->getCache($cacheHash)) {
                 $response = $this->httpGET($artistPageURL);
                 if ($response->code == 200) {
-                    $this->resetThrottle();
                     if (!empty($response->body)) {
                         $doc = new \DomDocument();
                         $doc->loadHTML($response->body);

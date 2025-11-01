@@ -12,6 +12,7 @@ class Album extends \aportela\LastFMWrapper\Entity
      */
     public function search(string $artist, string $album, int $limit = 1): array
     {
+        $this->checkThrottle();
         $url = sprintf(self::SEARCH_API_URL, urlencode($artist), urlencode(($album)), $this->apiKey, $limit, $this->apiFormat->value);
         $this->logger->debug("LastFMWrapper\Album::search", array("artist" => $artist, "album" => $album, "limit" => $limit, "apiURL" => $url));
         $response = $this->httpGET($url);
@@ -42,6 +43,7 @@ class Album extends \aportela\LastFMWrapper\Entity
     {
         $cacheHash = md5("ALBUM:" . mb_strtolower(mb_trim($artist)) . mb_strtolower(mb_trim($album)));
         if (!$this->getCache($cacheHash)) {
+            $this->checkThrottle();
             $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($album), $this->apiKey, $this->apiFormat->value);
             $this->logger->debug("LastFMWrapper\Album::get", array("artist" => $artist, "album" => $album, "apiURL" => $url));
             $response = $this->http->GET($url);
