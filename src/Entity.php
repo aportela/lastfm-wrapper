@@ -18,8 +18,6 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     private const MIN_THROTTLE_DELAY_MS = 500; // min allowed: 2 request per second
     public const DEFAULT_THROTTLE_DELAY_MS = 1000; // default: 1 request per second
 
-    protected bool $refreshExistingCache = false;
-
     public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS, ?\aportela\SimpleFSCache\Cache $cache = null)
     {
         parent::__construct($logger, $apiFormat, $apiKey);
