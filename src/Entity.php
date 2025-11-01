@@ -88,10 +88,10 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     /**
      * save current raw data into disk cache
      */
-    protected function saveCache(string $mbId, string $raw): bool
+    protected function saveCache(string $hash, string $raw): bool
     {
         if ($this->cache !== null) {
-            return ($this->cache->save($mbId, $raw));
+            return ($this->cache->save($hash, $raw));
         } else {
             return (false);
         }
@@ -100,10 +100,10 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     /**
      * remove cache entry
      */
-    protected function removeCache(string $mbId): bool
+    protected function removeCache(string $hash): bool
     {
         if ($this->cache !== null) {
-            return ($this->cache->remove($mbId));
+            return ($this->cache->remove($hash));
         } else {
             return (false);
         }
@@ -112,11 +112,11 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     /**
      * read disk cache into current raw data
      */
-    protected function getCache(string $mbId): bool
+    protected function getCache(string $hash): bool
     {
         $this->reset();
         if ($this->cache !== null) {
-            if ($cache = $this->cache->get($mbId)) {
+            if ($cache = $this->cache->get($hash)) {
                 $this->raw = $cache;
                 return (true);
             } else {
