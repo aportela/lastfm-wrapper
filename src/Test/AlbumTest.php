@@ -39,6 +39,7 @@ final class AlbumTest extends BaseTest
         $this->assertCount(1, $results);
         $this->assertSame(self::TEST_ALBUM_MBID, $results[0]->mbId);
         $this->assertSame(self::TEST_ALBUM_NAME, $results[0]->name);
+        $this->assertNotNull($results[0]->artist);
         $this->assertSame(self::TEST_ALBUM_ARTIST_NAME, $results[0]->artist->name);
         $this->assertSame(self::TEST_ALBUM_URL, $results[0]->url);
     }
@@ -49,6 +50,7 @@ final class AlbumTest extends BaseTest
         $this->assertCount(1, $results);
         $this->assertSame(self::TEST_ALBUM_MBID, $results[0]->mbId);
         $this->assertSame(self::TEST_ALBUM_NAME, $results[0]->name);
+        $this->assertNotNull($results[0]->artist);
         $this->assertSame(self::TEST_ALBUM_ARTIST_NAME, $results[0]->artist->name);
         $this->assertSame(self::TEST_ALBUM_URL, $results[0]->url);
     }

@@ -8,7 +8,7 @@ class Album extends \aportela\LastFMWrapper\Entity
     private const GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=%s&album=%s&api_key=%s&autocorrect=1&format=%s";
 
     /**
-     * @return array<mixed>
+     * @return array<\aportela\LastFMWrapper\ParseHelpers\AlbumHelper>
      */
     public function search(string $artist, string $album, int $limit = 1): array
     {

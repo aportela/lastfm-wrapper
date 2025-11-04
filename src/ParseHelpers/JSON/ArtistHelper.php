@@ -19,7 +19,9 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
 
         if (isset($object->similar) && isset($object->similar->artist) && is_array($object->similar->artist)) {
             foreach ($object->similar->artist as $artist) {
-                $this->similar[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper($artist);
+                if (is_object($artist)) {
+                    $this->similar[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper($artist);
+                }
             }
         }
 

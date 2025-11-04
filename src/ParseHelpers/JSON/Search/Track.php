@@ -15,7 +15,9 @@ class Track extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
         $results = [];
         if (isset($this->json->results->trackmatches->track) && is_array($this->json->results->trackmatches->track)) {
             foreach ($this->json->results->trackmatches->track as $trackObject) {
-                $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\TrackHelper($trackObject);
+                if (is_object($trackObject)) {
+                    $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\TrackHelper($trackObject);
+                }
             }
         }
         return ($results);

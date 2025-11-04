@@ -28,7 +28,9 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
         $this->album = isset($object->album) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper($object->album) : null;
         if (isset($object->toptags) && isset($object->toptags->tag) && is_array($object->toptags->tag)) {
             foreach ($object->toptags->tag as $tag) {
-                $this->tags[] = mb_strtolower(trim($tag->name));
+                if (is_object($tag) && isset($tag->name) && ! empty($tag->name)) {
+                    $this->tags[] = mb_strtolower(trim($tag->name));
+                }
             }
             $this->tags = array_unique($this->tags);
         }

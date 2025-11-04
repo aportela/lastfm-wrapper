@@ -15,7 +15,9 @@ class Album extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
         $results = [];
         if (isset($this->json->results->albummatches->album) && is_array($this->json->results->albummatches->album)) {
             foreach ($this->json->results->albummatches->album as $albumObject) {
-                $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper($albumObject);
+                if (is_object($albumObject)) {
+                    $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper($albumObject);
+                }
             }
         }
         return ($results);

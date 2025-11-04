@@ -15,7 +15,9 @@ class Artist extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
         $results = [];
         if (isset($this->json->results->artistmatches->artist) && is_array($this->json->results->artistmatches->artist)) {
             foreach ($this->json->results->artistmatches->artist as $artistObject) {
-                $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper($artistObject);
+                if (is_object($artistObject)) {
+                    $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper($artistObject);
+                }
             }
         }
         return ($results);
