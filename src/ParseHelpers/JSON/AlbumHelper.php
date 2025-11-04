@@ -24,9 +24,10 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                     break;
                 case "string":
                     // Search Artist API (this returns artist name as string)
-                    if (! empty((string)$object->artist)) {
+                    $artistName = (string)$object->artist;
+                    if (! empty($artistName)) {
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
-                        $this->artist->name = (string)$object->artist;
+                        $this->artist->name = $artistName;
                     }
                     break;
             }

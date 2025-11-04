@@ -25,9 +25,10 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                     $this->artist = isset($children->artist) ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
                 } else {
                     // Search Artist API (this returns artist name as string)
-                    if (! empty((string)$children->artist)) {
+                    $artistName = (string)$children->artist;
+                    if (! empty($artistName)) {
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
-                        $this->artist->name = (string)$children->artist;
+                        $this->artist->name = $artistName;
                     }
                 }
             }
