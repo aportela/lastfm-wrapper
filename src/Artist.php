@@ -12,30 +12,24 @@ class Artist extends \aportela\LastFMWrapper\Entity
      */
     public function search(string $name, int $limit = 1): array
     {
-        $this->checkThrottle();
         $url = sprintf(self::SEARCH_API_URL, urlencode($name), $this->apiKey, $limit, $this->apiFormat->value);
-        $this->logger->debug("LastFMWrapper\Artist::search", array("name" => $name, "limit" => $limit, "apiURL" => $url));
-        $response = $this->httpGET($url);
-        if ($response->code == 200) {
-            $this->resetThrottle();
-            if ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::XML) {
-                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Search\Artist($response->body);
-            } elseif ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON) {
-                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Search\Artist($response->body);
-            } else {
-                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("");
+        $responseBody = $this->httpGET($url);
+        if (! empty($responseBody)) {
+            switch ($this->apiFormat) {
+                case \aportela\LastFMWrapper\APIFormat::XML:
+                    $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Search\Artist($responseBody);
+                    break;
+                case \aportela\LastFMWrapper\APIFormat::JSON:
+                    $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Search\Artist($responseBody);
+                    break;
+                default:
+                    $this->logger->error("\aportela\LastFMWrapper\Artist::search - Error: invalid API format", [$this->apiFormat]);
+                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("Invalid API format: {$this->apiFormat->value}");
             }
-            $results = $this->parser->parse();
-            if (count($results) > 0) {
-                return ($results);
-            } else {
-                throw new \aportela\LastFMWrapper\Exception\NotFoundException("artist name: {$name}", 0);
-            }
-        } elseif ($response->code == 503) {
-            $this->incrementThrottle();
-            throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist name: {$name}", $response->code);
+            return ($this->parser->parse());
         } else {
-            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist name: {$name}", $response->code);
+            $this->logger->error("\aportela\LastFMWrapper\Artist::search - Error: empty body on API response", [$url]);
+            throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse("Empty body on API response for URL: {$url}");
         }
     }
 
@@ -43,39 +37,47 @@ class Artist extends \aportela\LastFMWrapper\Entity
     {
         $cacheHash = md5("ARTISTNAME:" . mb_strtolower(mb_trim($name)));
         if (!$this->getCache($cacheHash)) {
-            $this->checkThrottle();
             $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey, $this->apiFormat->value);
-            $this->logger->debug("LastFMWrapper\Artist::get", array("name" => $name, "apiURL" => $url));
-            $response = $this->httpGET($url);
-            if ($response->code == 200) {
-                $this->resetThrottle();
-                $this->saveCache($cacheHash, $response->body);
-                return ($this->parse($response->body));
-            } elseif ($response->code == 503) {
-                $this->incrementThrottle();
-                throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: {$name}", $response->code);
+            $responseBody = $this->httpGET($url);
+            if (! empty($responseBody)) {
+                $this->saveCache($cacheHash, $responseBody);
+                return ($this->parse($responseBody));
             } else {
-                throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: {$name}", $response->code);
+                $this->logger->error("\aportela\LastFMWrapper\Artist::get - Error: empty body on API response", [$url]);
+                throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse("Empty body on API response for URL: {$url}");
             }
         } else {
-            return ($this->parse($this->raw));
+            if (! empty($this->raw)) {
+                return ($this->parse($this->raw));
+            } else {
+                $this->logger->error("\aportela\LastFMWrapper\Artist::get - Error: cached data for identifier is empty", [$cacheHash]);
+                throw new \aportela\LastFMWrapper\Exception\InvalidCacheException("Cached data for identifier ({$cacheHash}) is empty");
+            }
         }
     }
 
     public function parse(string $rawText): \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
     {
         $this->reset();
-        if ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::XML) {
-            $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Get\Artist($rawText);
-        } elseif ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON) {
-            $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Get\Artist($rawText);
-        } else {
-            throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("");
+        switch ($this->apiFormat) {
+            case \aportela\LastFMWrapper\APIFormat::XML:
+                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Get\Artist($rawText);
+                break;
+            case \aportela\LastFMWrapper\APIFormat::JSON:
+                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Get\Artist($rawText);
+                break;
+            default:
+                $this->logger->error("\aportela\MusicBrainzWrapper\Album::parse - Error: invalid API format", [$this->apiFormat]);
+                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("Invalid API format: {$this->apiFormat->value}");
         }
         $this->raw = $rawText;
         $artist = $this->parser->parse();
         if (! empty($artist->url)) {
-            $artist->image = $this->getImageFromArtistPageURL($artist->url);
+            try {
+                $artist->image = $this->getImageFromArtistPageURL($artist->url);
+            } catch (\Exception $e) {
+                $this->logger->info("\aportela\MusicBrainzWrapper\Album::parse - Error getting image from artist url page", [$artist->url, $e->getCode(), $e->getMessage()]);
+            }
         }
         return ($artist);
     }
@@ -84,41 +86,43 @@ class Artist extends \aportela\LastFMWrapper\Entity
     {
         $cacheHash = md5("ARTISTIMAGEURL:" . mb_trim($artistPageURL));
         $imageURL = null;
-        $this->logger->debug("LastFMWrapper\Artist::getImageFromArtistPageURL", array("url" => $artistPageURL));
         if (str_starts_with($artistPageURL, "https://www.last.fm/music/")) {
             if (!$this->getCache($cacheHash)) {
-                $response = $this->httpGET($artistPageURL);
-                if ($response->code == 200) {
-                    if (!empty($response->body)) {
-                        $doc = new \DomDocument();
-                        $doc->loadHTML($response->body);
-                        $xpath = new \DOMXPath($doc);
-                        $query = '//*/meta[starts-with(@property, \'og:\')]';
-                        $metas = $xpath->query($query);
-                        if ($metas !== false) {
-                            for ($i = 0; $i < $metas->length; $i++) {
-                                $meta = $metas->item($i);
-                                if ($meta instanceof \DOMElement && $meta->getAttribute('property') == 'og:image') {
-                                    $imageURL = $meta->getAttribute('content');
-                                    break;
-                                }
-                            }
-                            if (! empty($imageURL)) {
-                                $this->saveCache($cacheHash, $imageURL);
+                $responseBody = $this->httpGET($artistPageURL);
+                if (! empty($responseBody)) {
+                    $doc = new \DomDocument();
+                    $doc->loadHTML($responseBody);
+                    $xpath = new \DOMXPath($doc);
+                    $expression = '//*/meta[starts-with(@property, \'og:\')]';
+                    $metas = $xpath->query($expression);
+                    if ($metas !== false) {
+                        for ($i = 0; $i < $metas->length; $i++) {
+                            $meta = $metas->item($i);
+                            if ($meta instanceof \DOMElement && $meta->getAttribute('property') == 'og:image') {
+                                $imageURL = $meta->getAttribute('content');
+                                break;
                             }
                         }
-                        return ($imageURL);
-                    } else {
-                        throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponseFormatException("empy body");
+                        if (! empty($imageURL)) {
+                            $this->saveCache($cacheHash, $imageURL);
+                        }
                     }
+                    return ($imageURL);
                 } else {
-                    throw new \aportela\LastFMWrapper\Exception\HTTPException("url: " . $artistPageURL, $response->code);
+                    $this->logger->error("\aportela\LastFMWrapper\Artist::getImageFromArtistPageURL - Error: empty body on artist URL page request", [$artistPageURL]);
+                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse("Empty body on artist page request, URL: {$artistPageURL}");
                 }
             } else {
-                return ($this->raw);
+                if (! empty($this->raw)) {
+                    return ($this->raw);
+                } else {
+                    $this->logger->error("\aportela\LastFMWrapper\Artist::getImageFromArtistPageURL - Error: cached data for identifier is empty", [$cacheHash]);
+                    throw new \aportela\LastFMWrapper\Exception\InvalidCacheException("Cached data for identifier ({$cacheHash}) is empty");
+                }
             }
         } else {
-            throw new \aportela\LastFMWrapper\Exception\InvalidURLException("invalid url: " . $artistPageURL);
+            $this->logger->error("\aportela\LastFMWrapper\Artist::getImageFromArtistPageURL - Invalid Last.FM artist page URL", [$artistPageURL]);
+            throw new \aportela\LastFMWrapper\Exception\InvalidCacheException("Invalid Last.FM artist page URL: {$artistPageURL}");
         }
     }
 }

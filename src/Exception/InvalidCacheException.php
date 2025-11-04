@@ -2,7 +2,7 @@
 
 namespace aportela\LastFMWrapper\Exception;
 
-class LibXMLMissingException extends \Exception
+class InvalidCacheException extends \Exception
 {
     public function __construct(string $message = "", int $code = 0, ?\Exception $previous = null)
     {

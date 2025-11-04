@@ -12,30 +12,24 @@ class Album extends \aportela\LastFMWrapper\Entity
      */
     public function search(string $artist, string $album, int $limit = 1): array
     {
-        $this->checkThrottle();
         $url = sprintf(self::SEARCH_API_URL, urlencode($artist), urlencode(($album)), $this->apiKey, $limit, $this->apiFormat->value);
-        $this->logger->debug("LastFMWrapper\Album::search", array("artist" => $artist, "album" => $album, "limit" => $limit, "apiURL" => $url));
-        $response = $this->httpGET($url);
-        if ($response->code == 200) {
-            $this->resetThrottle();
-            if ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::XML) {
-                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Search\Album($response->body);
-            } elseif ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON) {
-                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Search\Album($response->body);
-            } else {
-                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("");
+        $responseBody = $this->httpGET($url);
+        if (! empty($responseBody)) {
+            switch ($this->apiFormat) {
+                case \aportela\LastFMWrapper\APIFormat::XML:
+                    $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Search\Album($responseBody);
+                    break;
+                case \aportela\LastFMWrapper\APIFormat::JSON:
+                    $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Search\Album($responseBody);
+                    break;
+                default:
+                    $this->logger->error("\aportela\LastFMWrapper\Album::search - Error: invalid API format", [$this->apiFormat]);
+                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("Invalid API format: {$this->apiFormat->value}");
             }
-            $results = $this->parser->parse();
-            if (count($results) > 0) {
-                return ($results);
-            } else {
-                throw new \aportela\LastFMWrapper\Exception\NotFoundException("artist: {$artist} album: {$album}", 0);
-            }
-        } elseif ($response->code == 503) {
-            $this->incrementThrottle();
-            throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: {$artist} album: {$album}", $response->code);
+            return ($this->parser->parse());
         } else {
-            throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: {$artist} album: {$album}", $response->code);
+            $this->logger->error("\aportela\LastFMWrapper\Album::search - Error: empty body on API response", [$url]);
+            throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse("Empty body on API response for URL: {$url}");
         }
     }
 
@@ -43,34 +37,38 @@ class Album extends \aportela\LastFMWrapper\Entity
     {
         $cacheHash = md5("ALBUM:" . mb_strtolower(mb_trim($artist)) . mb_strtolower(mb_trim($album)));
         if (!$this->getCache($cacheHash)) {
-            $this->checkThrottle();
             $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($album), $this->apiKey, $this->apiFormat->value);
-            $this->logger->debug("LastFMWrapper\Album::get", array("artist" => $artist, "album" => $album, "apiURL" => $url));
-            $response = $this->http->GET($url);
-            if ($response->code == 200) {
-                $this->resetThrottle();
-                $this->saveCache($cacheHash, $response->body);
-                return ($this->parse($response->body));
-            } elseif ($response->code == 503) {
-                $this->incrementThrottle();
-                throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("artist: {$artist} album: {$album}", $response->code);
+            $responseBody = $this->httpGET($url);
+            if (! empty($responseBody)) {
+                $this->saveCache($cacheHash, $responseBody);
+                return ($this->parse($responseBody));
             } else {
-                throw new \aportela\LastFMWrapper\Exception\HTTPException("artist: {$artist} album: {$album}", $response->code);
+                $this->logger->error("\aportela\LastFMWrapper\Album::get - Error: empty body on API response", [$url]);
+                throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse("Empty body on API response for URL: {$url}");
             }
         } else {
-            return ($this->parse($this->raw));
+            if (! empty($this->raw)) {
+                return ($this->parse($this->raw));
+            } else {
+                $this->logger->error("\aportela\LastFMWrapper\Album::get - Error: cached data for identifier is empty", [$cacheHash]);
+                throw new \aportela\LastFMWrapper\Exception\InvalidCacheException("Cached data for identifier ({$cacheHash}) is empty");
+            }
         }
     }
 
     public function parse(string $rawText): \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
     {
         $this->reset();
-        if ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::XML) {
-            $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Get\Album($rawText);
-        } elseif ($this->apiFormat == \aportela\LastFMWrapper\APIFormat::JSON) {
-            $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Get\Album($rawText);
-        } else {
-            throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("");
+        switch ($this->apiFormat) {
+            case \aportela\LastFMWrapper\APIFormat::XML:
+                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Get\Album($rawText);
+                break;
+            case \aportela\LastFMWrapper\APIFormat::JSON:
+                $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Get\Album($rawText);
+                break;
+            default:
+                $this->logger->error("\aportela\MusicBrainzWrapper\Album::parse - Error: invalid API format", [$this->apiFormat]);
+                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("Invalid API format: {$this->apiFormat->value}");
         }
         $this->raw = $rawText;
         return ($this->parser->parse());
