@@ -63,6 +63,7 @@ final class ArtistTest extends BaseTest
         $this->assertNotEmpty($artist->image);
         $this->assertTrue(count($artist->tags) > 0);
         $this->assertTrue(count($artist->similar) > 0);
+        $this->assertNotNull($artist->bio);
         $this->assertNotEmpty($artist->bio->summary);
         $this->assertNotEmpty($artist->bio->content);
     }
@@ -81,6 +82,7 @@ final class ArtistTest extends BaseTest
         $this->assertNotEmpty($artist->image);
         $this->assertTrue(count($artist->tags) > 0);
         $this->assertTrue(count($artist->similar) > 0);
+        $this->assertNotNull($artist->bio);
         $this->assertNotEmpty($artist->bio->summary);
         $this->assertNotEmpty($artist->bio->content);
     }

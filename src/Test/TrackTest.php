@@ -44,6 +44,7 @@ final class TrackTest extends BaseTest
         $this->assertSame(self::TEST_TRACK_MBID, $results[0]->mbId);
         $this->assertSame(self::TEST_TRACK_TITLE, $results[0]->name);
         $this->assertSame(self::TEST_TRACK_URL, $results[0]->url);
+        $this->assertNotNull($results[0]->artist);
         $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $results[0]->artist->name);
     }
 
@@ -54,6 +55,7 @@ final class TrackTest extends BaseTest
         $this->assertSame(self::TEST_TRACK_MBID, $results[0]->mbId);
         $this->assertSame(self::TEST_TRACK_TITLE, $results[0]->name);
         $this->assertSame(self::TEST_TRACK_URL, $results[0]->url);
+        $this->assertNotNull($results[0]->artist);
         $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $results[0]->artist->name);
     }
 
@@ -68,10 +70,13 @@ final class TrackTest extends BaseTest
         $this->assertSame(self::TEST_TRACK_MBID, $track->mbId);
         $this->assertSame(self::TEST_TRACK_TITLE, $track->name);
         $this->assertSame(self::TEST_TRACK_URL, $track->url);
+        $this->assertNotNull($track->artist);
         $this->assertSame(self::TEST_TRACK_ARTIST_MBID, $track->artist->mbId);
         $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->artist->name);
         $this->assertSame(self::TEST_TRACK_ARTIST_URL, $track->artist->url);
+        $this->assertNotNull($track->album);
         $this->assertSame(self::TEST_TRACK_ALBUM_NAME, $track->album->name);
+        $this->assertNotNull($track->album->artist);
         $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->album->artist->name);
         $this->assertSame(self::TEST_TRACK_ALBUM_URL, $track->album->url);
     }
@@ -87,10 +92,13 @@ final class TrackTest extends BaseTest
         $this->assertSame(self::TEST_TRACK_MBID, $track->mbId);
         $this->assertSame(self::TEST_TRACK_TITLE, $track->name);
         $this->assertSame(self::TEST_TRACK_URL, $track->url);
+        $this->assertNotNull($track->artist);
         $this->assertSame(self::TEST_TRACK_ARTIST_MBID, $track->artist->mbId);
         $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->artist->name);
         $this->assertSame(self::TEST_TRACK_ARTIST_URL, $track->artist->url);
+        $this->assertNotNull($track->album);
         $this->assertSame(self::TEST_TRACK_ALBUM_NAME, $track->album->name);
+        $this->assertNotNull($track->album->artist);
         $this->assertSame(self::TEST_TRACK_ARTIST_NAME, $track->album->artist->name);
         $this->assertSame(self::TEST_TRACK_ALBUM_URL, $track->album->url);
     }
