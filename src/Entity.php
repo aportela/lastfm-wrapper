@@ -123,7 +123,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
                 return ($response->body);
             } elseif ($response->code == 404) {
                 $this->logger->error("\aportela\LastFMWrapper\Entity::httpGET - Error opening URL", [$url, $response->code, $response->body]);
-                throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("Error opening URL: {$url}", $response->code);
+                throw new \aportela\LastFMWrapper\Exception\NotFoundException("Error opening URL: {$url}", $response->code);
             } elseif ($response->code == 503) {
                 $this->incrementThrottle();
                 $this->logger->error("\aportela\LastFMWrapper\Entity::httpGET - Error opening URL", [$url, $response->code, $response->body]);
