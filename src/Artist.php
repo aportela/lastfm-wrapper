@@ -104,7 +104,17 @@ class Artist extends \aportela\LastFMWrapper\Entity
                             }
                         }
                         if (! empty($imageURL)) {
-                            $this->saveCache($cacheHash, $imageURL);
+                            $previousCacheFormat = $this->getCacheFormat();
+                            if (! is_bool($previousCacheFormat)) {
+                                $this->setCacheFormat(\aportela\SimpleFSCache\CacheFormat::TXT);
+                            }
+                            try {
+                                $this->saveCache($cacheHash, $imageURL);
+                            } finally {
+                                if (! is_bool($previousCacheFormat)) {
+                                    $this->setCacheFormat($previousCacheFormat);
+                                }
+                            }
                         }
                     }
                     return ($imageURL);

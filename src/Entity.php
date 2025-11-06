@@ -67,6 +67,31 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     }
 
     /**
+     * get cache format
+     */
+    protected function getCacheFormat(): \aportela\SimpleFSCache\CacheFormat|bool
+    {
+        if ($this->cache !== null) {
+            return ($this->getCacheFormat());
+        } else {
+            return (false);
+        }
+    }
+
+    /**
+     * set cache format
+     */
+    protected function setCacheFormat(\aportela\SimpleFSCache\CacheFormat $format): bool
+    {
+        if ($this->cache !== null) {
+            $this->cache->setFormat($format);
+            return (true);
+        } else {
+            return (false);
+        }
+    }
+
+    /**
      * save current raw data into disk cache
      */
     protected function saveCache(string $identifier, string $raw): bool
