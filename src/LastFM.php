@@ -21,18 +21,16 @@ class LastFM
             throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("supported formats: " . implode(", ", [\aportela\LastFMWrapper\APIFormat::XML->value, \aportela\LastFMWrapper\APIFormat::JSON->value]));
         }
         $this->apiFormat = $apiFormat;
-        if ($apiFormat == \aportela\LastFMWrapper\APIFormat::XML) {
-            $loadedExtensions = get_loaded_extensions();
-            foreach (["dom", "libxml", "SimpleXML"] as $requiredExtension) {
-                if (!in_array($requiredExtension, $loadedExtensions)) {
-                    $this->logger->critical("\aportela\MusicBrainzWrapper\LastFM::__construct - ERROR: {$requiredExtension} php extension not found", $loadedExtensions);
-                    throw new \aportela\LastFMWrapper\Exception\PHPExtensionMissingException("Missing required php extension: {$requiredExtension}, loaded extensions: " . implode(", ", $loadedExtensions));
-                }
+        $loadedExtensions = get_loaded_extensions();
+        foreach (["dom", "libxml", "SimpleXML"] as $requiredExtension) {
+            if (!in_array($requiredExtension, $loadedExtensions)) {
+                $this->logger->critical("\aportela\MusicBrainzWrapper\LastFM::__construct - ERROR: {$requiredExtension} php extension not found", $loadedExtensions);
+                throw new \aportela\LastFMWrapper\Exception\PHPExtensionMissingException("Missing required php extension: {$requiredExtension}, loaded extensions: " . implode(", ", $loadedExtensions));
             }
-            // avoids simplexml_load_string warnings
-            // https://stackoverflow.com/a/40585185
-            libxml_use_internal_errors(true);
         }
+        // avoids simplexml_load_string warnings
+        // https://stackoverflow.com/a/40585185
+        libxml_use_internal_errors(true);
         if (empty($apiKey)) {
             $this->logger->critical("\aportela\MusicBrainzWrapper\LastFM::__construct - ERROR: empty API KEY");
             throw new \aportela\LastFMWrapper\Exception\InvalidAPIKeyException("empty key");
@@ -40,7 +38,5 @@ class LastFM
         $this->apiKey = $apiKey;
     }
 
-    public function __destruct()
-    {
-    }
+    public function __destruct() {}
 }
