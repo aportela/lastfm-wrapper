@@ -72,7 +72,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     protected function getCacheFormat(): \aportela\SimpleFSCache\CacheFormat|bool
     {
         if ($this->cache !== null) {
-            return ($this->getCacheFormat());
+            return ($this->cache->getFormat());
         } else {
             return (false);
         }
