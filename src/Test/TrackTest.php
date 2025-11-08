@@ -29,8 +29,8 @@ final class TrackTest extends BaseTest
     {
         parent::setUpBeforeClass();
         if (! empty(self::$lastFMAPIKey)) {
-            self::$JSONCache = new \aportela\SimpleFSCache\Cache(self::$logger, \aportela\SimpleFSCache\CacheFormat::JSON, self::$cachePath, false);
-            self::$XMLCache = new \aportela\SimpleFSCache\Cache(self::$logger, \aportela\SimpleFSCache\CacheFormat::XML, self::$cachePath, false);
+            self::$JSONCache = new \aportela\SimpleFSCache\Cache(self::$logger, self::$cachePath, null, \aportela\SimpleFSCache\CacheFormat::JSON);
+            self::$XMLCache = new \aportela\SimpleFSCache\Cache(self::$logger, self::$cachePath, null, \aportela\SimpleFSCache\CacheFormat::XML);
 
             self::$jsonAPI = new \aportela\LastFMWrapper\Track(self::$logger, \aportela\LastFMWrapper\APIFormat::JSON, self::$lastFMAPIKey ?? "", \aportela\LastFMWrapper\Entity::DEFAULT_THROTTLE_DELAY_MS, self::$JSONCache);
             self::$xmlAPI = new \aportela\LastFMWrapper\Track(self::$logger, \aportela\LastFMWrapper\APIFormat::XML, self::$lastFMAPIKey ?? "", \aportela\LastFMWrapper\Entity::DEFAULT_THROTTLE_DELAY_MS, self::$XMLCache);

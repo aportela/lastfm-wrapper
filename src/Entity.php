@@ -97,7 +97,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     protected function saveCache(string $identifier, string $raw): bool
     {
         if ($this->cache !== null) {
-            return ($this->cache->save($identifier, $raw));
+            return ($this->cache->set($identifier, $raw));
         } else {
             return (false);
         }
@@ -109,7 +109,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     protected function removeCache(string $identifier): bool
     {
         if ($this->cache !== null) {
-            return ($this->cache->remove($identifier));
+            return ($this->cache->delete($identifier));
         } else {
             return (false);
         }
@@ -122,7 +122,7 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     {
         $this->reset();
         if ($this->cache !== null) {
-            $cacheData = $this->cache->get($identifier);
+            $cacheData = $this->cache->get($identifier, false);
             if (is_string($cacheData)) {
                 $this->raw = $cacheData;
                 return (true);
