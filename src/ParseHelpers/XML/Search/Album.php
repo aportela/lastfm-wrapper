@@ -15,8 +15,8 @@ class Album extends \aportela\LastFMWrapper\ParseHelpers\ParseXMLHelper
         }
         $results = [];
         if (is_array($albumsXPath) && count($albumsXPath) > 0) {
-            foreach ($albumsXPath as $albumElement) {
-                $results[] = new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumHelper($albumElement);
+            foreach ($albumsXPath as $albumXPath) {
+                $results[] = new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumHelper($albumXPath);
             }
         }
         return ($results);

@@ -27,11 +27,6 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
         $this->reset();
     }
 
-    public function __destruct()
-    {
-        parent::__destruct();
-    }
-
     protected function reset(): void
     {
         $this->raw = null;
@@ -78,10 +73,10 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
     /**
      * set cache format
      */
-    protected function setCacheFormat(\aportela\SimpleFSCache\CacheFormat $format): bool
+    protected function setCacheFormat(\aportela\SimpleFSCache\CacheFormat $cacheFormat): bool
     {
         if ($this->cache !== null) {
-            $this->cache->setFormat($format);
+            $this->cache->setFormat($cacheFormat);
             return (true);
         } else {
             return (false);

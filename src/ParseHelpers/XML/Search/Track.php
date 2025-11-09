@@ -15,8 +15,8 @@ class Track extends \aportela\LastFMWrapper\ParseHelpers\ParseXMLHelper
         }
         $results = [];
         if (is_array($tracksXPath) && count($tracksXPath) > 0) {
-            foreach ($tracksXPath as $trackElement) {
-                $results[] = new \aportela\LastFMWrapper\ParseHelpers\XML\TrackHelper($trackElement);
+            foreach ($tracksXPath as $trackXPath) {
+                $results[] = new \aportela\LastFMWrapper\ParseHelpers\XML\TrackHelper($trackXPath);
             }
         }
         return ($results);

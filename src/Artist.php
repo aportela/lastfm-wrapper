@@ -90,11 +90,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
             if (!$this->getCache($cacheHash)) {
                 $responseBody = $this->httpGET($artistPageURL);
                 if (! empty($responseBody)) {
-                    $doc = new \DomDocument();
-                    $doc->loadHTML($responseBody);
-                    $xpath = new \DOMXPath($doc);
+                    $domDocument = new \DomDocument();
+                    $domDocument->loadHTML($responseBody);
+                    $domxPath = new \DOMXPath($domDocument);
                     $expression = '//*/meta[starts-with(@property, \'og:\')]';
-                    $metas = $xpath->query($expression);
+                    $metas = $domxPath->query($expression);
                     if ($metas !== false) {
                         for ($i = 0; $i < $metas->length; $i++) {
                             $meta = $metas->item($i);

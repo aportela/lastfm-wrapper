@@ -34,6 +34,4 @@ abstract class LastFM
         }
         $this->apiKey = $apiKey;
     }
-
-    public function __destruct() {}
 }
