@@ -2,7 +2,7 @@
 
 namespace aportela\LastFMWrapper;
 
-class LastFM
+abstract class LastFM
 {
     public const USER_AGENT = "LastFMWrapper - https://github.com/aportela/lastfm-wrapper (766f6964+github@gmail.com)";
     protected \aportela\HTTPRequestWrapper\HTTPRequest $http;
@@ -35,7 +35,5 @@ class LastFM
         $this->apiKey = $apiKey;
     }
 
-    public function __destruct()
-    {
-    }
+    public function __destruct() {}
 }

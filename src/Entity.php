@@ -2,7 +2,7 @@
 
 namespace aportela\LastFMWrapper;
 
-class Entity extends \aportela\LastFMWrapper\LastFM
+abstract class Entity extends \aportela\LastFMWrapper\LastFM
 {
     protected mixed $parser = null;
 

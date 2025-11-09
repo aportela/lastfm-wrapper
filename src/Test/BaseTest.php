@@ -6,7 +6,7 @@ namespace aportela\LastFMWrapper\Test;
 
 require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
-class BaseTest extends \PHPUnit\Framework\TestCase
+abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     protected static \Psr\Log\NullLogger $logger;
     protected static ?string $lastFMAPIKey;
@@ -40,16 +40,12 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     /**
      * Clean up the test case, called for every defined test
      */
-    public function tearDown(): void
-    {
-    }
+    public function tearDown(): void {}
 
     /**
      * Clean up the whole test class
      */
-    public static function tearDownAfterClass(): void
-    {
-    }
+    public static function tearDownAfterClass(): void {}
 
     public function testCheckEnvironmentApiKey(): void
     {
