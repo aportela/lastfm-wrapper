@@ -26,6 +26,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
                     }
                 }
             }
+
             $this->album = isset($children->album) ? new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumHelper($children->album) : null;
 
             if (isset($children->toptags)) {
@@ -34,6 +35,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
                     foreach ($tags as $tag) {
                         $this->tags[] = mb_strtolower(mb_trim(strval($tag->children()->name)));
                     }
+
                     $this->tags = array_unique($this->tags);
                 }
             }

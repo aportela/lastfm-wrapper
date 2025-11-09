@@ -7,6 +7,7 @@ namespace aportela\LastFMWrapper\ParseHelpers;
 class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\BaseHelper
 {
     public ?string $name = null;
+    
     public ?string $url = null;
 
     public ?string $image = null;

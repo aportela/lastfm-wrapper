@@ -14,6 +14,7 @@ class Track extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
         if (! (isset($this->json->results) && isset($this->json->results->trackmatches))) {
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("trackmatches track array not found");
         }
+        
         $results = [];
         if (isset($this->json->results->trackmatches->track) && is_array($this->json->results->trackmatches->track)) {
             foreach ($this->json->results->trackmatches->track as $trackObject) {
@@ -22,6 +23,7 @@ class Track extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
                 }
             }
         }
+        
         return ($results);
     }
 }

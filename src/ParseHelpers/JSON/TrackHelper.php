@@ -24,9 +24,11 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
                         $this->artist->name = (string)$object->artist;
                     }
+                    
                     break;
             }
         }
+        
         $this->album = isset($object->album) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper($object->album) : null;
         if (isset($object->toptags) && isset($object->toptags->tag) && is_array($object->toptags->tag)) {
             foreach ($object->toptags->tag as $tag) {
@@ -34,6 +36,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
                     $this->tags[] = mb_strtolower(mb_trim($tag->name));
                 }
             }
+            
             $this->tags = array_unique($this->tags);
         }
     }

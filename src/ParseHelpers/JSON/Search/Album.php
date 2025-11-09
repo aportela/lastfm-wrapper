@@ -14,6 +14,7 @@ class Album extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
         if (! (isset($this->json->results) && isset($this->json->results->albummatches))) {
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("albummatches album array not found");
         }
+        
         $results = [];
         if (isset($this->json->results->albummatches->album) && is_array($this->json->results->albummatches->album)) {
             foreach ($this->json->results->albummatches->album as $albumObject) {
@@ -22,6 +23,7 @@ class Album extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
                 }
             }
         }
+        
         return ($results);
     }
 }

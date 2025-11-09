@@ -34,6 +34,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                     }
                 }
             }
+
             $this->url = ! empty($children->url) ? (string)$children->url : null;
 
             if (isset($children->tags)) {
@@ -42,6 +43,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                     foreach ($tags as $tag) {
                         $this->tags[] = mb_strtolower(mb_trim(strval($tag->children()->name)));
                     }
+
                     $this->tags = array_unique($this->tags);
                 }
             }
@@ -54,6 +56,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                     }
                 }
             }
+
             $this->wiki = isset($children->wiki) ? new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumWikiHelper($children->wiki) : null;
         } else {
             throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("album element without children elements");

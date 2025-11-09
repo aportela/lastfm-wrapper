@@ -15,12 +15,14 @@ class Track extends \aportela\LastFMWrapper\ParseHelpers\ParseXMLHelper
         if ($tracksXPath === false) {
             throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("trackmatches track xpath not found");
         }
+        
         $results = [];
-        if (is_array($tracksXPath) && count($tracksXPath) > 0) {
+        if (is_array($tracksXPath) && $tracksXPath !== []) {
             foreach ($tracksXPath as $trackXPath) {
                 $results[] = new \aportela\LastFMWrapper\ParseHelpers\XML\TrackHelper($trackXPath);
             }
         }
+        
         return ($results);
     }
 }

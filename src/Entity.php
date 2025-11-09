@@ -17,6 +17,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
      * Your account may be suspended if your application is continuously making several calls per second or if you’re making excessive calls. See our API Terms of Service for more information on limits.
      */
     private const int MIN_THROTTLE_DELAY_MS = 500;
+
      // min allowed: 2 request per second
     public const DEFAULT_THROTTLE_DELAY_MS = 1000; // default: 1 request per second
 
