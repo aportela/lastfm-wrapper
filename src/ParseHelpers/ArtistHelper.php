@@ -7,7 +7,7 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\BaseHelper
     public ?string $name = null;
     public ?string $url = null;
 
-    public ?string $image;
+    public ?string $image = null;
 
     /**
      * @var array<string>

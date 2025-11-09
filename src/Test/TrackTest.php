@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace aportela\LastFMWrapper\Test;
 
-require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 final class TrackTest extends BaseTest
 {
@@ -25,6 +25,7 @@ final class TrackTest extends BaseTest
     /**
      * Called once just like normal constructor
      */
+    #[\Override]
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();

@@ -7,18 +7,16 @@ class Entity extends \aportela\LastFMWrapper\LastFM
     protected mixed $parser = null;
 
     public ?string $raw;
-
-    private ?\aportela\SimpleFSCache\Cache $cache = null;
-    private \aportela\SimpleThrottle\Throttle $throttle;
+    private readonly \aportela\SimpleThrottle\Throttle $throttle;
 
     /**
      * https://www.last.fm/api/intro
      * Your account may be suspended if your application is continuously making several calls per second or if you’re making excessive calls. See our API Terms of Service for more information on limits.
      */
-    private const MIN_THROTTLE_DELAY_MS = 500; // min allowed: 2 request per second
+    private const int MIN_THROTTLE_DELAY_MS = 500; // min allowed: 2 request per second
     public const DEFAULT_THROTTLE_DELAY_MS = 1000; // default: 1 request per second
 
-    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS, ?\aportela\SimpleFSCache\Cache $cache = null)
+    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS, private readonly ?\aportela\SimpleFSCache\Cache $cache = null)
     {
         parent::__construct($logger, $apiFormat, $apiKey);
         if ($throttleDelayMS < self::MIN_THROTTLE_DELAY_MS) {
@@ -26,7 +24,6 @@ class Entity extends \aportela\LastFMWrapper\LastFM
             throw new \aportela\LastFMWrapper\Exception\InvalidThrottleMsDelayException("min throttle delay ms required: " . self::MIN_THROTTLE_DELAY_MS);
         }
         $this->throttle = new \aportela\SimpleThrottle\Throttle($this->logger, $throttleDelayMS, 5000, 10);
-        $this->cache = $cache;
         $this->reset();
     }
 

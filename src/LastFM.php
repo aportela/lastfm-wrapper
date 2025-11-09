@@ -5,15 +5,12 @@ namespace aportela\LastFMWrapper;
 class LastFM
 {
     public const USER_AGENT = "LastFMWrapper - https://github.com/aportela/lastfm-wrapper (766f6964+github@gmail.com)";
-
-    protected \Psr\Log\LoggerInterface $logger;
     protected \aportela\HTTPRequestWrapper\HTTPRequest $http;
     protected \aportela\LastFMWrapper\APIFormat $apiFormat;
     protected string $apiKey;
 
-    public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey)
+    public function __construct(protected \Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey)
     {
-        $this->logger = $logger;
         $this->http = new \aportela\HTTPRequestWrapper\HTTPRequest($this->logger, self::USER_AGENT);
         $supportedApiFormats = [\aportela\LastFMWrapper\APIFormat::XML, \aportela\LastFMWrapper\APIFormat::JSON];
         if (!in_array($apiFormat, $supportedApiFormats)) {

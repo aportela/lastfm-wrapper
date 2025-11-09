@@ -4,8 +4,8 @@ namespace aportela\LastFMWrapper;
 
 class Track extends \aportela\LastFMWrapper\Entity
 {
-    private const SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=track.search&artist=%s&track=%s&api_key=%s&limit=%d&format=%s";
-    private const GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=%s&track=%s&api_key=%s&autocorrect=1&format=%s";
+    private const string SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=track.search&artist=%s&track=%s&api_key=%s&limit=%d&format=%s";
+    private const string GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=%s&track=%s&api_key=%s&autocorrect=1&format=%s";
 
     /**
      * @return array<\aportela\LastFMWrapper\ParseHelpers\TrackHelper>

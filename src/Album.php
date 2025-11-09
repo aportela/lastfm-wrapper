@@ -4,8 +4,8 @@ namespace aportela\LastFMWrapper;
 
 class Album extends \aportela\LastFMWrapper\Entity
 {
-    private const SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=album.search&artist=%s&album=%s&autocorrect=1&api_key=%s&limit=%d&format=%s";
-    private const GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=%s&album=%s&api_key=%s&autocorrect=1&format=%s";
+    private const string SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=album.search&artist=%s&album=%s&autocorrect=1&api_key=%s&limit=%d&format=%s";
+    private const string GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=%s&album=%s&api_key=%s&autocorrect=1&format=%s";
 
     /**
      * @return array<\aportela\LastFMWrapper\ParseHelpers\AlbumHelper>
