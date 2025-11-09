@@ -9,12 +9,17 @@ require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SE
 final class AlbumTest extends BaseTest
 {
     private const string TEST_ALBUM_MBID = "1031f9e1-d9b0-39d6-a983-d3b552da054d";
+    
     private const string TEST_ALBUM_NAME = "Tourism";
+    
     private const int TEST_ALBUM_TRACK_COUNT = 16;
+    
     private const string TEST_ALBUM_URL = "https://www.last.fm/music/Roxette/Tourism";
+    
     private const string TEST_ALBUM_ARTIST_NAME = "Roxette";
 
     private static \aportela\LastFMWrapper\Album $jsonAPI;
+    
     private static \aportela\LastFMWrapper\Album $xmlAPI;
 
     /**
@@ -61,15 +66,16 @@ final class AlbumTest extends BaseTest
         $album = null;
         try {
             $album = self::$jsonAPI->get(self::TEST_ALBUM_ARTIST_NAME, self::TEST_ALBUM_NAME);
-        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $e) {
-            $this->markTestSkipped('API server connection error: ' . $e->getMessage());
+        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $remoteAPIServerConnectionException) {
+            $this->markTestSkipped('API server connection error: ' . $remoteAPIServerConnectionException->getMessage());
         }
+        
         $this->assertSame(self::TEST_ALBUM_MBID, $album->mbId);
         $this->assertSame(self::TEST_ALBUM_NAME, $album->name);
         $this->assertNotNull($album->artist);
         $this->assertSame(self::TEST_ALBUM_ARTIST_NAME, $album->artist->name);
         $this->assertSame(self::TEST_ALBUM_URL, $album->url);
-        $this->assertTrue(count($album->tags) > 0);
+        $this->assertTrue($album->tags !== []);
         $this->assertCount(self::TEST_ALBUM_TRACK_COUNT, $album->tracks);
         $totalTracks = count($album->tracks);
         for ($i = 0; $i < $totalTracks; ++$i) {
@@ -82,15 +88,16 @@ final class AlbumTest extends BaseTest
         $album = null;
         try {
             $album = self::$xmlAPI->get(self::TEST_ALBUM_ARTIST_NAME, self::TEST_ALBUM_NAME);
-        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $e) {
-            $this->markTestSkipped('API server connection error: ' . $e->getMessage());
+        } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $remoteAPIServerConnectionException) {
+            $this->markTestSkipped('API server connection error: ' . $remoteAPIServerConnectionException->getMessage());
         }
+        
         $this->assertSame(self::TEST_ALBUM_MBID, $album->mbId);
         $this->assertSame(self::TEST_ALBUM_NAME, $album->name);
         $this->assertNotNull($album->artist);
         $this->assertSame(self::TEST_ALBUM_ARTIST_NAME, $album->artist->name);
         $this->assertSame(self::TEST_ALBUM_URL, $album->url);
-        $this->assertTrue(count($album->tags) > 0);
+        $this->assertTrue($album->tags !== []);
         $this->assertCount(self::TEST_ALBUM_TRACK_COUNT, $album->tracks);
         $totalTracks = count($album->tracks);
         for ($i = 0; $i < $totalTracks; ++$i) {

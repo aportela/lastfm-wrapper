@@ -7,6 +7,7 @@ namespace aportela\LastFMWrapper;
 class Track extends \aportela\LastFMWrapper\Entity
 {
     private const string SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=track.search&artist=%s&track=%s&api_key=%s&limit=%d&format=%s";
+    
     private const string GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=%s&track=%s&api_key=%s&autocorrect=1&format=%s";
 
     /**
@@ -25,13 +26,14 @@ class Track extends \aportela\LastFMWrapper\Entity
                     $this->parser = new \aportela\LastFMWrapper\ParseHelpers\JSON\Search\Track($responseBody);
                     break;
                 default:
-                    $this->logger->error("\aportela\LastFMWrapper\Track::search - Error: invalid API format", [$this->apiFormat]);
-                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("Invalid API format: {$this->apiFormat->value}");
+                    $this->logger->error(\aportela\LastFMWrapper\Track::class . '::search - Error: invalid API format', [$this->apiFormat]);
+                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $this->apiFormat->value);
             }
+            
             return ($this->parser->parse());
         } else {
-            $this->logger->error("\aportela\LastFMWrapper\Track::search - Error: empty body on API response", [$url]);
-            throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse("Empty body on API response for URL: {$url}");
+            $this->logger->error(\aportela\LastFMWrapper\Track::class . '::search - Error: empty body on API response', [$url]);
+            throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse('Empty body on API response for URL: ' . $url);
         }
     }
 
@@ -45,15 +47,15 @@ class Track extends \aportela\LastFMWrapper\Entity
                 $this->saveCache($cacheHash, $responseBody);
                 return ($this->parse($responseBody));
             } else {
-                $this->logger->error("\aportela\LastFMWrapper\Track::get - Error: empty body on API response", [$url]);
-                throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse("Empty body on API response for URL: {$url}");
+                $this->logger->error(\aportela\LastFMWrapper\Track::class . '::get - Error: empty body on API response', [$url]);
+                throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse('Empty body on API response for URL: ' . $url);
             }
         } else {
             if (! empty($this->raw)) {
                 return ($this->parse($this->raw));
             } else {
-                $this->logger->error("\aportela\LastFMWrapper\Track::get - Error: cached data for identifier is empty", [$cacheHash]);
-                throw new \aportela\LastFMWrapper\Exception\InvalidCacheException("Cached data for identifier ({$cacheHash}) is empty");
+                $this->logger->error(\aportela\LastFMWrapper\Track::class . '::get - Error: cached data for identifier is empty', [$cacheHash]);
+                throw new \aportela\LastFMWrapper\Exception\InvalidCacheException(sprintf('Cached data for identifier (%s) is empty', $cacheHash));
             }
         }
     }
@@ -70,8 +72,9 @@ class Track extends \aportela\LastFMWrapper\Entity
                 break;
             default:
                 $this->logger->error("\aportela\MusicBrainzWrapper\Track::parse - Error: invalid API format", [$this->apiFormat]);
-                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat("Invalid API format: {$this->apiFormat->value}");
+                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $this->apiFormat->value);
         }
+        
         $this->raw = $rawText;
         return ($this->parser->parse());
     }

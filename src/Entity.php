@@ -9,22 +9,25 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
     protected mixed $parser = null;
 
     public ?string $raw;
+    
     private readonly \aportela\SimpleThrottle\Throttle $throttle;
 
     /**
      * https://www.last.fm/api/intro
      * Your account may be suspended if your application is continuously making several calls per second or if you’re making excessive calls. See our API Terms of Service for more information on limits.
      */
-    private const int MIN_THROTTLE_DELAY_MS = 500; // min allowed: 2 request per second
+    private const int MIN_THROTTLE_DELAY_MS = 500;
+     // min allowed: 2 request per second
     public const DEFAULT_THROTTLE_DELAY_MS = 1000; // default: 1 request per second
 
     public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS, private readonly ?\aportela\SimpleFSCache\Cache $cache = null)
     {
         parent::__construct($logger, $apiFormat, $apiKey);
         if ($throttleDelayMS < self::MIN_THROTTLE_DELAY_MS) {
-            $this->logger->critical("\aportela\LastFMWrapper\Entity::__construct - ERROR: invalid throttleDelayMS", [$throttleDelayMS, self::MIN_THROTTLE_DELAY_MS]);
+            $this->logger->critical(\aportela\LastFMWrapper\Entity::class . '::__construct - ERROR: invalid throttleDelayMS', [$throttleDelayMS, self::MIN_THROTTLE_DELAY_MS]);
             throw new \aportela\LastFMWrapper\Exception\InvalidThrottleMsDelayException("min throttle delay ms required: " . self::MIN_THROTTLE_DELAY_MS);
         }
+        
         $this->throttle = new \aportela\SimpleThrottle\Throttle($this->logger, $throttleDelayMS, 5000, 10);
         $this->reset();
     }
@@ -133,7 +136,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function httpGET(string $url): ?string
     {
-        $this->logger->debug("\aportela\LastFMWrapper\Entity::httpGET - Opening URL", [$url]);
+        $this->logger->debug(\aportela\LastFMWrapper\Entity::class . '::httpGET - Opening URL', [$url]);
         try {
             $this->checkThrottle();
             $response = $this->http->GET($url);
@@ -141,20 +144,20 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
                 $this->resetThrottle();
                 return ($response->body);
             } elseif ($response->code == 404) {
-                $this->logger->error("\aportela\LastFMWrapper\Entity::httpGET - Error opening URL", [$url, $response->code, $response->body]);
-                throw new \aportela\LastFMWrapper\Exception\NotFoundException("Error opening URL: {$url}", $response->code);
+                $this->logger->error(\aportela\LastFMWrapper\Entity::class . '::httpGET - Error opening URL', [$url, $response->code, $response->body]);
+                throw new \aportela\LastFMWrapper\Exception\NotFoundException('Error opening URL: ' . $url, $response->code);
             } elseif ($response->code == 503) {
                 $this->incrementThrottle();
-                $this->logger->error("\aportela\LastFMWrapper\Entity::httpGET - Error opening URL", [$url, $response->code, $response->body]);
-                throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException("Error opening URL: {$url}", $response->code);
+                $this->logger->error(\aportela\LastFMWrapper\Entity::class . '::httpGET - Error opening URL', [$url, $response->code, $response->body]);
+                throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException('Error opening URL: ' . $url, $response->code);
             } else {
-                $this->logger->error("\aportela\LastFMWrapper\Entity::httpGET - Error opening URL", [$url, $response->code, $response->body]);
-                throw new \aportela\LastFMWrapper\Exception\HTTPException("Error opening URL: {$url}", $response->code);
+                $this->logger->error(\aportela\LastFMWrapper\Entity::class . '::httpGET - Error opening URL', [$url, $response->code, $response->body]);
+                throw new \aportela\LastFMWrapper\Exception\HTTPException('Error opening URL: ' . $url, $response->code);
             }
-        } catch (\aportela\HTTPRequestWrapper\Exception\CurlExecException $e) {
-            $this->logger->error("\aportela\LastFMWrapper\Entity::httpGET - Error opening URL", [$url, $e->getCode(), $e->getMessage()]);
+        } catch (\aportela\HTTPRequestWrapper\Exception\CurlExecException $curlExecException) {
+            $this->logger->error(\aportela\LastFMWrapper\Entity::class . '::httpGET - Error opening URL', [$url, $curlExecException->getCode(), $curlExecException->getMessage()]);
             $this->incrementThrottle(); // sometimes api calls return connection error, interpret this as rate limit response
-            throw new \aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException("Error opening URL: {$url}", 0, $e);
+            throw new \aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException('Error opening URL: ' . $url, 0, $curlExecException);
         }
     }
 }
