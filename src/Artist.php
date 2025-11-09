@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper;
 
 class Artist extends \aportela\LastFMWrapper\Entity
@@ -96,7 +98,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
                     $expression = '//*/meta[starts-with(@property, \'og:\')]';
                     $metas = $domxPath->query($expression);
                     if ($metas !== false) {
-                        for ($i = 0; $i < $metas->length; $i++) {
+                        for ($i = 0; $i < $metas->length; ++$i) {
                             $meta = $metas->item($i);
                             if ($meta instanceof \DOMElement && $meta->getAttribute('property') == 'og:image') {
                                 $imageURL = $meta->getAttribute('content');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper\ParseHelpers\XML\Get;
 
 class Album extends \aportela\LastFMWrapper\ParseHelpers\ParseXMLHelper

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper\ParseHelpers\XML;
 
 class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
@@ -8,7 +10,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
     {
         $children = $element->children();
         if ($children != null) {
-            $this->rank = isset($element->attributes()->rank) ? intval($element->attributes()->rank) : null;
+            $this->rank = isset($element->attributes()->rank) ? (int)$element->attributes()->rank : null;
             $this->mbId = !empty($children->mbid) ? (string)$children->mbid : null;
             $this->name = !empty($children->name) ? (string)$children->name : null;
             $this->url = !empty($children->url) ? (string)$children->url : null;
@@ -30,7 +32,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
                 $tags = $children->toptags->children()->tag;
                 if (isset($tags)) {
                     foreach ($tags as $tag) {
-                        $this->tags[] = mb_strtolower(mb_trim($tag->children()->name));
+                        $this->tags[] = mb_strtolower(mb_trim(strval($tag->children()->name)));
                     }
                     $this->tags = array_unique($this->tags);
                 }

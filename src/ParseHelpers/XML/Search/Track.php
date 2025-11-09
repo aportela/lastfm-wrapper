@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper\ParseHelpers\XML\Search;
 
 class Track extends \aportela\LastFMWrapper\ParseHelpers\ParseXMLHelper

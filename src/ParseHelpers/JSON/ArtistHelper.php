@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper\ParseHelpers\JSON;
 
 class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper\ParseHelpers\XML\Get;
 
 class Artist extends \aportela\LastFMWrapper\ParseHelpers\ParseXMLHelper

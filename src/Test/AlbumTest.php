@@ -72,7 +72,7 @@ final class AlbumTest extends BaseTest
         $this->assertTrue(count($album->tags) > 0);
         $this->assertCount(self::TEST_ALBUM_TRACK_COUNT, $album->tracks);
         $totalTracks = count($album->tracks);
-        for ($i = 0; $i < $totalTracks; $i++) {
+        for ($i = 0; $i < $totalTracks; ++$i) {
             $this->assertSame($i + 1, $album->tracks[$i]->rank);
         }
     }
@@ -93,7 +93,7 @@ final class AlbumTest extends BaseTest
         $this->assertTrue(count($album->tags) > 0);
         $this->assertCount(self::TEST_ALBUM_TRACK_COUNT, $album->tracks);
         $totalTracks = count($album->tracks);
-        for ($i = 0; $i < $totalTracks; $i++) {
+        for ($i = 0; $i < $totalTracks; ++$i) {
             $this->assertSame($i + 1, $album->tracks[$i]->rank);
         }
     }

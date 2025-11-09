@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper;
 
 class Track extends \aportela\LastFMWrapper\Entity

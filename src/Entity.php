@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper;
 
 abstract class Entity extends \aportela\LastFMWrapper\LastFM

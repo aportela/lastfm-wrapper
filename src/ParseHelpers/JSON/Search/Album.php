@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper\ParseHelpers\JSON\Search;
 
 class Album extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper

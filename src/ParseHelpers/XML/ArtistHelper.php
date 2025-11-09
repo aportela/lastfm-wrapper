@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper\ParseHelpers\XML;
 
 class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
@@ -16,7 +18,7 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
                 $tags = $children->tags->children()->tag;
                 if (isset($tags)) {
                     foreach ($tags as $tag) {
-                        $this->tags[] = mb_strtolower(mb_trim($tag->children()->name));
+                        $this->tags[] = mb_strtolower(mb_trim(strval($tag->children()->name)));
                     }
                     $this->tags = array_unique($this->tags);
                 }

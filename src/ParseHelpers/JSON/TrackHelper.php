@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper\ParseHelpers\JSON;
 
 class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper

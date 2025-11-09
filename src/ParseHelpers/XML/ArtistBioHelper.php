@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace aportela\LastFMWrapper\ParseHelpers\XML;
 
 class ArtistBioHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistBioHelper
