@@ -69,7 +69,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function getCacheFormat(): \aportela\SimpleFSCache\CacheFormat|bool
     {
-        if ($this->cache !== null) {
+        if ($this->cache instanceof \aportela\SimpleFSCache\Cache) {
             return ($this->cache->getFormat());
         } else {
             return (false);
@@ -81,7 +81,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function setCacheFormat(\aportela\SimpleFSCache\CacheFormat $cacheFormat): bool
     {
-        if ($this->cache !== null) {
+        if ($this->cache instanceof \aportela\SimpleFSCache\Cache) {
             $this->cache->setFormat($cacheFormat);
             return (true);
         } else {
@@ -94,7 +94,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function saveCache(string $identifier, string $raw): bool
     {
-        if ($this->cache !== null) {
+        if ($this->cache instanceof \aportela\SimpleFSCache\Cache) {
             return ($this->cache->set($identifier, $raw));
         } else {
             return (false);
@@ -106,7 +106,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
      */
     protected function removeCache(string $identifier): bool
     {
-        if ($this->cache !== null) {
+        if ($this->cache instanceof \aportela\SimpleFSCache\Cache) {
             return ($this->cache->delete($identifier));
         } else {
             return (false);
@@ -119,7 +119,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
     protected function getCache(string $identifier): bool
     {
         $this->reset();
-        if ($this->cache !== null) {
+        if ($this->cache instanceof \aportela\SimpleFSCache\Cache) {
             $cacheData = $this->cache->get($identifier, false);
             if (is_string($cacheData)) {
                 $this->raw = $cacheData;
@@ -141,13 +141,13 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
         try {
             $this->checkThrottle();
             $response = $this->http->GET($url);
-            if ($response->code == 200) {
+            if ($response->code === 200) {
                 $this->resetThrottle();
                 return ($response->body);
-            } elseif ($response->code == 404) {
+            } elseif ($response->code === 404) {
                 $this->logger->error(\aportela\LastFMWrapper\Entity::class . '::httpGET - Error opening URL', [$url, $response->code, $response->body]);
                 throw new \aportela\LastFMWrapper\Exception\NotFoundException('Error opening URL: ' . $url, $response->code);
-            } elseif ($response->code == 503) {
+            } elseif ($response->code === 503) {
                 $this->incrementThrottle();
                 $this->logger->error(\aportela\LastFMWrapper\Entity::class . '::httpGET - Error opening URL', [$url, $response->code, $response->body]);
                 throw new \aportela\LastFMWrapper\Exception\RateLimitExceedException('Error opening URL: ' . $url, $response->code);

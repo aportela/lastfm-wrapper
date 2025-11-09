@@ -35,7 +35,7 @@ abstract class LastFM
         // avoids simplexml_load_string warnings
         // https://stackoverflow.com/a/40585185
         libxml_use_internal_errors(true);
-        if (empty($apiKey)) {
+        if ($apiKey === '' || $apiKey === '0') {
             $this->logger->critical("\aportela\MusicBrainzWrapper\LastFM::__construct - ERROR: empty API KEY");
             throw new \aportela\LastFMWrapper\Exception\InvalidAPIKeyException("empty key");
         }

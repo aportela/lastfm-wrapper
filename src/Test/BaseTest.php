@@ -34,7 +34,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        if (empty(self::$lastFMAPIKey)) {
+        if (in_array(self::$lastFMAPIKey, [null, '', '0'], true)) {
             $this->markTestSkipped("LASTFM_API_KEY environment variable NOT FOUND");
         }
     }

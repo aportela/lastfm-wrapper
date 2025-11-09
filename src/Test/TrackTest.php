@@ -35,7 +35,7 @@ final class TrackTest extends BaseTest
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        if (! empty(self::$lastFMAPIKey)) {
+        if (!in_array(self::$lastFMAPIKey, [null, '', '0'], true)) {
             self::$JSONCache = new \aportela\SimpleFSCache\Cache(self::$logger, self::$cachePath, null, \aportela\SimpleFSCache\CacheFormat::JSON);
             self::$XMLCache = new \aportela\SimpleFSCache\Cache(self::$logger, self::$cachePath, null, \aportela\SimpleFSCache\CacheFormat::XML);
 

@@ -17,7 +17,7 @@ class Track extends \aportela\LastFMWrapper\Entity
     {
         $url = sprintf(self::SEARCH_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $limit, $this->apiFormat->value);
         $responseBody = $this->httpGET($url);
-        if (! empty($responseBody)) {
+        if (!in_array($responseBody, [null, '', '0'], true)) {
             switch ($this->apiFormat) {
                 case \aportela\LastFMWrapper\APIFormat::XML:
                     $this->parser = new \aportela\LastFMWrapper\ParseHelpers\XML\Search\Track($responseBody);
@@ -43,20 +43,18 @@ class Track extends \aportela\LastFMWrapper\Entity
         if (!$this->getCache($cacheHash)) {
             $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $this->apiFormat->value);
             $responseBody = $this->httpGET($url);
-            if (! empty($responseBody)) {
+            if (!in_array($responseBody, [null, '', '0'], true)) {
                 $this->saveCache($cacheHash, $responseBody);
                 return ($this->parse($responseBody));
             } else {
                 $this->logger->error(\aportela\LastFMWrapper\Track::class . '::get - Error: empty body on API response', [$url]);
                 throw new \aportela\LastFMWrapper\Exception\InvalidAPIResponse('Empty body on API response for URL: ' . $url);
             }
+        } elseif (!in_array($this->raw, [null, '', '0'], true)) {
+            return ($this->parse($this->raw));
         } else {
-            if (! empty($this->raw)) {
-                return ($this->parse($this->raw));
-            } else {
-                $this->logger->error(\aportela\LastFMWrapper\Track::class . '::get - Error: cached data for identifier is empty', [$cacheHash]);
-                throw new \aportela\LastFMWrapper\Exception\InvalidCacheException(sprintf('Cached data for identifier (%s) is empty', $cacheHash));
-            }
+            $this->logger->error(\aportela\LastFMWrapper\Track::class . '::get - Error: cached data for identifier is empty', [$cacheHash]);
+            throw new \aportela\LastFMWrapper\Exception\InvalidCacheException(sprintf('Cached data for identifier (%s) is empty', $cacheHash));
         }
     }
 
