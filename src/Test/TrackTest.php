@@ -9,23 +9,23 @@ require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SE
 final class TrackTest extends BaseTest
 {
     private const string TEST_TRACK_MBID = "459fe686-82a2-4f36-b932-b62822c44bdc";
-    
+
     private const string TEST_TRACK_TITLE = "Silver Blue";
-    
+
     private const string TEST_TRACK_URL = "https://www.last.fm/music/Roxette/_/Silver+Blue";
 
     private const string TEST_TRACK_ARTIST_NAME = "Roxette";
-    
+
     private const string TEST_TRACK_ARTIST_MBID = "d3b2711f-2baa-441a-be95-14945ca7e6ea";
-    
+
     private const string TEST_TRACK_ARTIST_URL = "https://www.last.fm/music/Roxette";
 
     private const string TEST_TRACK_ALBUM_NAME = "Tourism";
-    
+
     private const string TEST_TRACK_ALBUM_URL = "https://www.last.fm/music/Roxette/Tourism";
 
     private static \aportela\LastFMWrapper\Track $jsonAPI;
-    
+
     private static \aportela\LastFMWrapper\Track $xmlAPI;
 
     /**
@@ -74,7 +74,7 @@ final class TrackTest extends BaseTest
         } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $remoteAPIServerConnectionException) {
             $this->markTestSkipped('API server connection error: ' . $remoteAPIServerConnectionException->getMessage());
         }
-        
+
         $this->assertSame(self::TEST_TRACK_MBID, $track->mbId);
         $this->assertSame(self::TEST_TRACK_TITLE, $track->name);
         $this->assertSame(self::TEST_TRACK_URL, $track->url);
@@ -97,7 +97,7 @@ final class TrackTest extends BaseTest
         } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $remoteAPIServerConnectionException) {
             $this->markTestSkipped('API server connection error: ' . $remoteAPIServerConnectionException->getMessage());
         }
-        
+
         $this->assertSame(self::TEST_TRACK_MBID, $track->mbId);
         $this->assertSame(self::TEST_TRACK_TITLE, $track->name);
         $this->assertSame(self::TEST_TRACK_URL, $track->url);

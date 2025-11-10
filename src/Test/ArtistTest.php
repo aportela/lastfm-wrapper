@@ -9,13 +9,13 @@ require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SE
 final class ArtistTest extends BaseTest
 {
     private const string TEST_ARTIST_NAME = "Roxette";
-    
+
     private const string TEST_ARTIST_MBID = "d3b2711f-2baa-441a-be95-14945ca7e6ea";
-    
+
     private const string TEST_ARTIST_URL = "https://www.last.fm/music/Roxette";
 
     private static \aportela\LastFMWrapper\Artist $jsonAPI;
-    
+
     private static \aportela\LastFMWrapper\Artist $xmlAPI;
 
     /**
@@ -61,7 +61,7 @@ final class ArtistTest extends BaseTest
         } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $remoteAPIServerConnectionException) {
             $this->markTestSkipped('API server connection error: ' . $remoteAPIServerConnectionException->getMessage());
         }
-        
+
         $this->assertSame(self::TEST_ARTIST_MBID, $artist->mbId);
         $this->assertSame(self::TEST_ARTIST_NAME, $artist->name);
         $this->assertSame(self::TEST_ARTIST_URL, $artist->url);
@@ -81,7 +81,7 @@ final class ArtistTest extends BaseTest
         } catch (\aportela\LastFMWrapper\Exception\RemoteAPIServerConnectionException $remoteAPIServerConnectionException) {
             $this->markTestSkipped('API server connection error: ' . $remoteAPIServerConnectionException->getMessage());
         }
-        
+
         $this->assertSame(self::TEST_ARTIST_MBID, $artist->mbId);
         $this->assertSame(self::TEST_ARTIST_NAME, $artist->name);
         $this->assertSame(self::TEST_ARTIST_URL, $artist->url);

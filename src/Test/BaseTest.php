@@ -9,13 +9,13 @@ require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SE
 abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     protected static \Psr\Log\NullLogger $logger;
-    
+
     protected static ?string $lastFMAPIKey;
 
     protected static string $cachePath;
 
     protected static \aportela\SimpleFSCache\Cache $JSONCache;
-    
+
     protected static \aportela\SimpleFSCache\Cache $XMLCache;
 
     /**
@@ -42,12 +42,16 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
     /**
      * Clean up the test case, called for every defined test
      */
-    protected function tearDown(): void {}
+    protected function tearDown(): void
+    {
+    }
 
     /**
      * Clean up the whole test class
      */
-    public static function tearDownAfterClass(): void {}
+    public static function tearDownAfterClass(): void
+    {
+    }
 
     public function testCheckEnvironmentApiKey(): void
     {

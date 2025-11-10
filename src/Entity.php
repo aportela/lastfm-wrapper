@@ -9,7 +9,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
     protected mixed $parser = null;
 
     public ?string $raw;
-    
+
     private readonly \aportela\SimpleThrottle\Throttle $throttle;
 
     /**
@@ -18,7 +18,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
      */
     private const int MIN_THROTTLE_DELAY_MS = 500;
 
-     // min allowed: 2 request per second
+    // min allowed: 2 request per second
     public const DEFAULT_THROTTLE_DELAY_MS = 1000; // default: 1 request per second
 
     public function __construct(\Psr\Log\LoggerInterface $logger, \aportela\LastFMWrapper\APIFormat $apiFormat, string $apiKey, int $throttleDelayMS = self::DEFAULT_THROTTLE_DELAY_MS, private readonly ?\aportela\SimpleFSCache\Cache $cache = null)
@@ -28,7 +28,7 @@ abstract class Entity extends \aportela\LastFMWrapper\LastFM
             $this->logger->critical(\aportela\LastFMWrapper\Entity::class . '::__construct - ERROR: invalid throttleDelayMS', [$throttleDelayMS, self::MIN_THROTTLE_DELAY_MS]);
             throw new \aportela\LastFMWrapper\Exception\InvalidThrottleMsDelayException("min throttle delay ms required: " . self::MIN_THROTTLE_DELAY_MS);
         }
-        
+
         $this->throttle = new \aportela\SimpleThrottle\Throttle($this->logger, $throttleDelayMS, 5000, 10);
         $this->reset();
     }

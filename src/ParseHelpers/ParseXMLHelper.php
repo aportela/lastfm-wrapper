@@ -19,10 +19,10 @@ class ParseXMLHelper
                 $errorMessage = "Error: " . $lastError->message . " (Line: " . $lastError->line . ", Column: " . $lastError->column . ")";
                 $errorCode = $lastError->code;
             }
-            
+
             throw new \aportela\LastFMWrapper\Exception\InvalidXMLException($errorMessage, $errorCode);
         }
-        
+
         $this->xml = $element;
     }
 

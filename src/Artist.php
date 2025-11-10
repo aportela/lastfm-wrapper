@@ -7,7 +7,7 @@ namespace aportela\LastFMWrapper;
 class Artist extends \aportela\LastFMWrapper\Entity
 {
     private const string SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=%s&api_key=%s&limit=%d&format=%s";
-    
+
     private const string GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=%s&api_key=%s&autocorrect=1&format=%s";
 
     /**
@@ -27,9 +27,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
                     break;
                 default:
                     $this->logger->error(\aportela\LastFMWrapper\Artist::class . '::search - Error: invalid API format', [$this->apiFormat]);
-                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $this->apiFormat->value);
+                    /** @var string $format */
+                    $format = $this->apiFormat->value;
+                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $format);
             }
-            
+
             return ($this->parser->parse());
         } else {
             $this->logger->error(\aportela\LastFMWrapper\Artist::class . '::search - Error: empty body on API response', [$url]);
@@ -70,9 +72,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
                 break;
             default:
                 $this->logger->error("\aportela\MusicBrainzWrapper\Album::parse - Error: invalid API format", [$this->apiFormat]);
-                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $this->apiFormat->value);
+                /** @var string $format */
+                $format = $this->apiFormat->value;
+                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $format);
         }
-        
+
         $this->raw = $rawText;
         $artist = $this->parser->parse();
         if (!in_array($artist->url, [null, '', '0'], true)) {
@@ -82,7 +86,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
                 $this->logger->info("\aportela\MusicBrainzWrapper\Album::parse - Error getting image from artist url page", [$artist->url, $e->getCode(), $e->getMessage()]);
             }
         }
-        
+
         return ($artist);
     }
 
@@ -107,13 +111,13 @@ class Artist extends \aportela\LastFMWrapper\Entity
                                 break;
                             }
                         }
-                        
+
                         if (! empty($imageURL)) {
                             $previousCacheFormat = $this->getCacheFormat();
                             if (! is_bool($previousCacheFormat)) {
                                 $this->setCacheFormat(\aportela\SimpleFSCache\CacheFormat::TXT);
                             }
-                            
+
                             try {
                                 $this->saveCache($cacheHash, $imageURL);
                             } finally {
@@ -123,7 +127,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
                             }
                         }
                     }
-                    
+
                     return ($imageURL);
                 } else {
                     $this->logger->error(\aportela\LastFMWrapper\Artist::class . '::getImageFromArtistPageURL - Error: empty body on artist URL page request', [$artistPageURL]);

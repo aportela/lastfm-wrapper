@@ -7,7 +7,7 @@ namespace aportela\LastFMWrapper;
 class Album extends \aportela\LastFMWrapper\Entity
 {
     private const string SEARCH_API_URL = "http://ws.audioscrobbler.com/2.0/?method=album.search&artist=%s&album=%s&autocorrect=1&api_key=%s&limit=%d&format=%s";
-    
+
     private const string GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=%s&album=%s&api_key=%s&autocorrect=1&format=%s";
 
     /**
@@ -27,9 +27,11 @@ class Album extends \aportela\LastFMWrapper\Entity
                     break;
                 default:
                     $this->logger->error(\aportela\LastFMWrapper\Album::class . '::search - Error: invalid API format', [$this->apiFormat]);
-                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $this->apiFormat->value);
+                    /** @var string $format */
+                    $format = $this->apiFormat->value;
+                    throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $format);
             }
-            
+
             return ($this->parser->parse());
         } else {
             $this->logger->error(\aportela\LastFMWrapper\Album::class . '::search - Error: empty body on API response', [$url]);
@@ -70,9 +72,11 @@ class Album extends \aportela\LastFMWrapper\Entity
                 break;
             default:
                 $this->logger->error("\aportela\MusicBrainzWrapper\Album::parse - Error: invalid API format", [$this->apiFormat]);
-                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $this->apiFormat->value);
+                /** @var string $format */
+                $format = $this->apiFormat->value;
+                throw new \aportela\LastFMWrapper\Exception\InvalidAPIFormat('Invalid API format: ' . $format);
         }
-        
+
         $this->raw = $rawText;
         return ($this->parser->parse());
     }
