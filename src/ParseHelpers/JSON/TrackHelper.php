@@ -9,9 +9,9 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
     public function __construct(object $object)
     {
         $this->rank = isset($object->{"@attr"}) && isset($object->{"@attr"}->rank) ? intval($object->{"@attr"}->rank) : null;
-        $this->mbId = !empty($object->mbid) ? (string)$object->mbid : null;
-        $this->name = !empty($object->name) ? (string)$object->name : null;
-        $this->url = !empty($object->url) ? (string)$object->url : null;
+        $this->mbId = empty($object->mbid) ? null : (string)$object->mbid;
+        $this->name = empty($object->name) ? null : (string)$object->name;
+        $this->url = empty($object->url) ? null : (string)$object->url;
         if (isset($object->artist)) {
             switch (gettype($object->artist)) {
                 case "object":
@@ -20,7 +20,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
                     break;
                 case "string":
                     // Search Artist API (this returns artist name as string)
-                    if (! empty((string)$object->artist)) {
+                    if ((string)$object->artist !== '' && (string)$object->artist !== '0') {
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
                         $this->artist->name = (string)$object->artist;
                     }

@@ -10,8 +10,8 @@ class ArtistBioHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistBioHelp
     {
         $children = $element->children();
         if ($children != null) {
-            $this->summary = ! empty($children->summary) ? (string) $children->summary : null;
-            $this->content = ! empty($children->content) ? (string) $children->content : null;
+            $this->summary = empty($children->summary) ? null : (string) $children->summary;
+            $this->content = empty($children->content) ? null : (string) $children->content;
         } else {
             throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("artist bio element without children elements");
         }

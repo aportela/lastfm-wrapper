@@ -10,11 +10,11 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
     {
         $children = $element->children();
         if ($children != null) {
-            $this->mbId = !empty($children->mbid) ? (string)$children->mbid : null;
-            $this->name = !empty($children->name) ? (string)$children->name : null;
-            $this->url = !empty($children->url) ? (string)$children->url : null;
+            $this->mbId = empty($children->mbid) ? null : (string)$children->mbid;
+            $this->name = empty($children->name) ? null : (string)$children->name;
+            $this->url = empty($children->url) ? null : (string)$children->url;
 
-            if (isset($children->tags)) {
+            if (property_exists($children, 'tags') && $children->tags !== null) {
                 $tags = $children->tags->children()->tag;
                 if (isset($tags)) {
                     foreach ($tags as $tag) {
@@ -25,7 +25,7 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
                 }
             }
 
-            if (isset($children->similar)) {
+            if (property_exists($children, 'similar') && $children->similar !== null) {
                 $artists = $children->similar->children()->artist;
                 if (isset($artists)) {
                     foreach ($artists as $artist) {
@@ -34,7 +34,7 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
                 }
             }
 
-            $this->bio = isset($children->bio) ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistBioHelper($children->bio) : null;
+            $this->bio = property_exists($children, 'bio') && $children->bio !== null ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistBioHelper($children->bio) : null;
         } else {
             throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("artist element without children elements");
         }

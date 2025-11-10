@@ -8,7 +8,7 @@ class ArtistBioHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistBioHelp
 {
     public function __construct(object $object)
     {
-        $this->summary = ! empty($object->summary) ? (string) $object->summary : null;
-        $this->content = ! empty($object->content) ? (string) $object->content : null;
+        $this->summary = empty($object->summary) ? null : (string) $object->summary;
+        $this->content = empty($object->content) ? null : (string) $object->content;
     }
 }

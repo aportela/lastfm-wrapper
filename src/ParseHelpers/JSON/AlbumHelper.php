@@ -8,7 +8,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
 {
     public function __construct(object $object)
     {
-        $this->mbId = !empty($object->mbid) ? (string)$object->mbid : null;
+        $this->mbId = empty($object->mbid) ? null : (string)$object->mbid;
         // WARNING: sometimes on album object/element of API responses name property is missing and replaced by title
         // ex: track album details on getTrack API response
         if (! empty($object->name)) {
@@ -28,7 +28,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                 case "string":
                     // Search Artist API (this returns artist name as string)
                     $artistName = (string)$object->artist;
-                    if (! empty($artistName)) {
+                    if ($artistName !== '' && $artistName !== '0') {
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
                         $this->artist->name = $artistName;
                     }
@@ -37,7 +37,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
             }
         }
         
-        $this->url = !empty($object->url) ? (string)$object->url : null;
+        $this->url = empty($object->url) ? null : (string)$object->url;
         if (isset($object->tags) && isset($object->tags->tag) && is_array($object->tags->tag)) {
             foreach ($object->tags->tag as $tag) {
                 if (is_object($tag) && isset($tag->name) && ! empty($tag->name)) {

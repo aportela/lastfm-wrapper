@@ -10,7 +10,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
     {
         $children = $element->children();
         if ($children != null) {
-            $this->mbId = !empty($children->mbid) ? (string)$children->mbid : null;
+            $this->mbId = empty($children->mbid) ? null : (string)$children->mbid;
             // WARNING: sometimes on album object/element of API responses name property is missing and replaced by title
             // ex: track album details on getTrack API response
             if (! empty($children->name)) {
@@ -21,23 +21,23 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                 throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("album name||title property not found");
             }
 
-            if (isset($children->artist)) {
+            if (property_exists($children, 'artist') && $children->artist !== null) {
                 if ($children->artist->children()) {
                     // Get Artist API (this returns artist as complete object)
-                    $this->artist = isset($children->artist) ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
+                    $this->artist = property_exists($children, 'artist') ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
                 } else {
                     // Search Artist API (this returns artist name as string)
                     $artistName = (string)$children->artist;
-                    if (! empty($artistName)) {
+                    if ($artistName !== '' && $artistName !== '0') {
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
                         $this->artist->name = $artistName;
                     }
                 }
             }
 
-            $this->url = ! empty($children->url) ? (string)$children->url : null;
+            $this->url = empty($children->url) ? null : (string)$children->url;
 
-            if (isset($children->tags)) {
+            if (property_exists($children, 'tags') && $children->tags !== null) {
                 $tags = $children->tags->children()->tag;
                 if (isset($tags)) {
                     foreach ($tags as $tag) {
@@ -48,7 +48,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                 }
             }
 
-            if (isset($children->tracks)) {
+            if (property_exists($children, 'tracks') && $children->tracks !== null) {
                 $tracks = $children->tracks->children()->track;
                 if (isset($tracks)) {
                     foreach ($tracks as $track) {
@@ -57,7 +57,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                 }
             }
 
-            $this->wiki = isset($children->wiki) ? new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumWikiHelper($children->wiki) : null;
+            $this->wiki = property_exists($children, 'wiki') && $children->wiki !== null ? new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumWikiHelper($children->wiki) : null;
         } else {
             throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("album element without children elements");
         }

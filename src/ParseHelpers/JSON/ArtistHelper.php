@@ -8,9 +8,9 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
 {
     public function __construct(object $object)
     {
-        $this->mbId = !empty($object->mbid) ? (string)$object->mbid : null;
-        $this->name = !empty($object->name) ? (string)$object->name : null;
-        $this->url = !empty($object->url) ? (string)$object->url : null;
+        $this->mbId = empty($object->mbid) ? null : (string)$object->mbid;
+        $this->name = empty($object->name) ? null : (string)$object->name;
+        $this->url = empty($object->url) ? null : (string)$object->url;
 
         if (isset($object->tags) && isset($object->tags->tag)) {
             foreach ($object->tags->tag as $tag) {

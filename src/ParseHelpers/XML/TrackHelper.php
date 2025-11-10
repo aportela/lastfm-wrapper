@@ -10,26 +10,24 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
     {
         $children = $element->children();
         if ($children != null) {
-            $this->rank = isset($element->attributes()->rank) ? (int)$element->attributes()->rank : null;
-            $this->mbId = !empty($children->mbid) ? (string)$children->mbid : null;
-            $this->name = !empty($children->name) ? (string)$children->name : null;
-            $this->url = !empty($children->url) ? (string)$children->url : null;
-            if (isset($children->artist)) {
+            $this->rank = property_exists($element->attributes(), 'rank') && $element->attributes()->rank !== null ? (int)$element->attributes()->rank : null;
+            $this->mbId = empty($children->mbid) ? null : (string)$children->mbid;
+            $this->name = empty($children->name) ? null : (string)$children->name;
+            $this->url = empty($children->url) ? null : (string)$children->url;
+            if (property_exists($children, 'artist') && $children->artist !== null) {
                 if ($children->artist->children()) {
                     // Get Artist API (this returns artist as complete object)
-                    $this->artist = isset($children->artist) ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
-                } else {
+                    $this->artist = property_exists($children, 'artist') ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
+                } elseif ((string)$children->artist !== '' && (string)$children->artist !== '0') {
                     // Search Artist API (this returns artist name as string)
-                    if (! empty((string)$children->artist)) {
-                        $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
-                        $this->artist->name = (string)$children->artist;
-                    }
+                    $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
+                    $this->artist->name = (string)$children->artist;
                 }
             }
 
-            $this->album = isset($children->album) ? new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumHelper($children->album) : null;
+            $this->album = property_exists($children, 'album') && $children->album !== null ? new \aportela\LastFMWrapper\ParseHelpers\XML\AlbumHelper($children->album) : null;
 
-            if (isset($children->toptags)) {
+            if (property_exists($children, 'toptags') && $children->toptags !== null) {
                 $tags = $children->toptags->children()->tag;
                 if (isset($tags)) {
                     foreach ($tags as $tag) {
