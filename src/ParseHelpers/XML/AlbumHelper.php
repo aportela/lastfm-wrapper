@@ -22,7 +22,8 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
             }
 
             if (property_exists($children, 'artist') && $children->artist !== null) {
-                if ($children->artist->children()) {
+                $childrenCompleteArtist = $children->artist->children();
+                if (property_exists($childrenCompleteArtist, "name") && property_exists($childrenCompleteArtist, "mbid") && property_exists($childrenCompleteArtist, "url")) {
                     // Get Artist API (this returns artist as complete object)
                     $this->artist = property_exists($children, 'artist') ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
                 } else {

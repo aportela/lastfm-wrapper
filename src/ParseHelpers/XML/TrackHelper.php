@@ -15,7 +15,8 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
             $this->name = empty($children->name) ? null : (string)$children->name;
             $this->url = empty($children->url) ? null : (string)$children->url;
             if (property_exists($children, 'artist') && $children->artist !== null) {
-                if ($children->artist->children()) {
+                $childrenCompleteArtist = $children->artist->children();
+                if (property_exists($childrenCompleteArtist, "name") && property_exists($childrenCompleteArtist, "mbid") && property_exists($childrenCompleteArtist, "url")) {
                     // Get Artist API (this returns artist as complete object)
                     $this->artist = property_exists($children, 'artist') ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
                 } elseif ((string)$children->artist !== '' && (string)$children->artist !== '0') {
