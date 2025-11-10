@@ -13,9 +13,9 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
         // ex: track album details on getTrack API response
         $name = $this->getObjectStringProperty($object, "name");
         $title = $this->getObjectStringProperty($object, "title");
-        if (! empty($name)) {
+        if (!in_array($name, [null, '', '0'], true)) {
             $this->name = $name;
-        } elseif (! empty($title)) {
+        } elseif (!in_array($title, [null, '', '0'], true)) {
             $this->name = $title;
         } else {
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("album name||title property not found");
@@ -42,7 +42,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
         $this->url = property_exists($object, "url") && is_string($object->url) ? $object->url : null;
         if (property_exists($object, "tags") && is_object($object->tags) && property_exists($object->tags, "tag") && is_array($object->tags->tag)) {
             foreach ($object->tags->tag as $tag) {
-                if (is_object($tag) && property_exists($tag, "name") &&  is_string($tag->name) && ! empty($tag->name)) {
+                if (is_object($tag) && property_exists($tag, "name") &&  is_string($tag->name) && ($tag->name !== '' && $tag->name !== '0')) {
                     $this->tags[] = mb_strtolower(mb_trim($tag->name));
                 }
             }

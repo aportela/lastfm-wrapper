@@ -32,7 +32,7 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
         $this->album = property_exists($object, "album") && is_object($object->album) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper($object->album) : null;
         if (property_exists($object, "toptags") && is_object($object->toptags) && property_exists($object->toptags, "tag") && is_array($object->toptags->tag)) {
             foreach ($object->toptags->tag as $tag) {
-                if (is_object($tag) && property_exists($tag, "name") && is_string($tag->name) && ! empty($tag->name)) {
+                if (is_object($tag) && property_exists($tag, "name") && is_string($tag->name) && ($tag->name !== '' && $tag->name !== '0')) {
                     $this->tags[] = mb_strtolower(mb_trim($tag->name));
                 }
             }

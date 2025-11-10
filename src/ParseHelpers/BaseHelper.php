@@ -10,7 +10,7 @@ class BaseHelper
 
     protected function getObjectStringProperty(object $object, string $property): string|null
     {
-        return (property_exists($object, $property) && is_string($object->{$property}) && ! empty($object->{$property}) ? $object->{$property} : null);
+        return (property_exists($object, $property) && is_string($object->{$property}) && ($object->{$property} !== '' && $object->{$property} !== '0') ? $object->{$property} : null);
     }
 
     protected function getObjectIntegerProperty(object $object, string $property): int|null
