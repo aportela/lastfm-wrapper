@@ -39,10 +39,10 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
             }
         }
 
-        $this->url = empty($object->url) ? null : (string)$object->url;
-        if (isset($object->tags) && isset($object->tags->tag) && is_array($object->tags->tag)) {
+        $this->url = property_exists($object, "url") && is_string($object->url) ? $object->url : null;
+        if (property_exists($object, "tags") && is_object($object->tags) && property_exists($object->tags, "tag") && is_array($object->tags->tag)) {
             foreach ($object->tags->tag as $tag) {
-                if (is_object($tag) && isset($tag->name) && ! empty($tag->name)) {
+                if (is_object($tag) && property_exists($tag, "name") &&  is_string($tag->name) && ! empty($tag->name)) {
                     $this->tags[] = mb_strtolower(mb_trim($tag->name));
                 }
             }
@@ -50,7 +50,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
             $this->tags = array_unique($this->tags);
         }
 
-        if (isset($object->tracks) && isset($object->tracks->track) && is_array($object->tracks->track)) {
+        if (property_exists($object, "tracks") && is_object($object->tracks) && property_exists($object->tracks, "track") && is_array($object->tracks->track)) {
             foreach ($object->tracks->track as $track) {
                 if (is_object($track)) {
                     $this->tracks[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\TrackHelper($track);
@@ -58,6 +58,6 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
             }
         }
 
-        $this->wiki = isset($object->wiki) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumWikiHelper($object->wiki) : null;
+        $this->wiki = property_exists($object, "wiki") && is_object($object->wiki) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumWikiHelper($object->wiki) : null;
     }
 }
