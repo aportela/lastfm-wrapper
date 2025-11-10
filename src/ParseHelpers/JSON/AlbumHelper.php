@@ -8,17 +8,19 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
 {
     public function __construct(object $object)
     {
-        $this->mbId = empty($object->mbid) ? null : (string)$object->mbid;
+        $this->mbId = $this->getObjectStringProperty($object, "mbid");
         // WARNING: sometimes on album object/element of API responses name property is missing and replaced by title
         // ex: track album details on getTrack API response
-        if (! empty($object->name)) {
-            $this->name = (string)$object->name;
-        } elseif (! empty($object->title)) {
-            $this->name = (string)$object->title;
+        $name = $this->getObjectStringProperty($object, "name");
+        $title = $this->getObjectStringProperty($object, "title");
+        if (! empty($name)) {
+            $this->name = $name;
+        } elseif (! empty($title)) {
+            $this->name = $title;
         } else {
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("album name||title property not found");
         }
-        
+
         if (isset($object->artist)) {
             switch (gettype($object->artist)) {
                 case "object":
@@ -32,11 +34,11 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
                         $this->artist->name = $artistName;
                     }
-                    
+
                     break;
             }
         }
-        
+
         $this->url = empty($object->url) ? null : (string)$object->url;
         if (isset($object->tags) && isset($object->tags->tag) && is_array($object->tags->tag)) {
             foreach ($object->tags->tag as $tag) {
@@ -44,10 +46,10 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                     $this->tags[] = mb_strtolower(mb_trim($tag->name));
                 }
             }
-            
+
             $this->tags = array_unique($this->tags);
         }
-        
+
         if (isset($object->tracks) && isset($object->tracks->track) && is_array($object->tracks->track)) {
             foreach ($object->tracks->track as $track) {
                 if (is_object($track)) {

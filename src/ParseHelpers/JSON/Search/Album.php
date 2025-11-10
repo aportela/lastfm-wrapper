@@ -11,19 +11,19 @@ class Album extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
      */
     public function parse(): array
     {
-        if (! (isset($this->json->results) && isset($this->json->results->albummatches))) {
+        if (! (property_exists($this->json, "results") && is_object($this->json->results) && property_exists($this->json->results, "albummatches"))) {
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("albummatches album array not found");
         }
-        
+
         $results = [];
-        if (isset($this->json->results->albummatches->album) && is_array($this->json->results->albummatches->album)) {
+        if (is_object($this->json->results->albummatches) && property_exists($this->json->results->albummatches, "album") && is_array($this->json->results->albummatches->album)) {
             foreach ($this->json->results->albummatches->album as $albumObject) {
                 if (is_object($albumObject)) {
                     $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper($albumObject);
                 }
             }
         }
-        
+
         return ($results);
     }
 }

@@ -8,10 +8,10 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
 {
     public function __construct(object $object)
     {
-        $this->rank = isset($object->{"@attr"}) && isset($object->{"@attr"}->rank) ? intval($object->{"@attr"}->rank) : null;
-        $this->mbId = empty($object->mbid) ? null : (string)$object->mbid;
-        $this->name = empty($object->name) ? null : (string)$object->name;
-        $this->url = empty($object->url) ? null : (string)$object->url;
+        $this->rank = property_exists($object, "@attr") && is_object($object->{"@attr"}) && property_exists($object->{"@attr"}, "rank") && is_numeric($object->{"@attr"}->rank) ? intval($object->{"@attr"}->rank) : null;
+        $this->mbId = $this->getObjectStringProperty($object, "mbid");
+        $this->name = $this->getObjectStringProperty($object, "name");
+        $this->url = $this->getObjectStringProperty($object, "url");
         if (isset($object->artist)) {
             switch (gettype($object->artist)) {
                 case "object":
@@ -24,19 +24,19 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
                         $this->artist->name = (string)$object->artist;
                     }
-                    
+
                     break;
             }
         }
-        
-        $this->album = isset($object->album) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper($object->album) : null;
-        if (isset($object->toptags) && isset($object->toptags->tag) && is_array($object->toptags->tag)) {
+
+        $this->album = property_exists($object, "album") && is_object($object->album) ? new \aportela\LastFMWrapper\ParseHelpers\JSON\AlbumHelper($object->album) : null;
+        if (property_exists($object, "toptags") && is_object($object->toptags) && property_exists($object->toptags, "tag") && is_array($object->toptags->tag)) {
             foreach ($object->toptags->tag as $tag) {
-                if (is_object($tag) && isset($tag->name) && ! empty($tag->name)) {
+                if (is_object($tag) && property_exists($tag, "name") && is_string($tag->name) && ! empty($tag->name)) {
                     $this->tags[] = mb_strtolower(mb_trim($tag->name));
                 }
             }
-            
+
             $this->tags = array_unique($this->tags);
         }
     }

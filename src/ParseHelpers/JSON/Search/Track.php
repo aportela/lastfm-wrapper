@@ -11,19 +11,19 @@ class Track extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
      */
     public function parse(): array
     {
-        if (! (isset($this->json->results) && isset($this->json->results->trackmatches))) {
+        if (! (property_exists($this->json, "results") && is_object($this->json->results) && property_exists($this->json->results, "trackmatches"))) {
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("trackmatches track array not found");
         }
-        
+
         $results = [];
-        if (isset($this->json->results->trackmatches->track) && is_array($this->json->results->trackmatches->track)) {
+        if (is_object($this->json->results->trackmatches) && property_exists($this->json->results->trackmatches, "track") && is_array($this->json->results->trackmatches->track)) {
             foreach ($this->json->results->trackmatches->track as $trackObject) {
                 if (is_object($trackObject)) {
                     $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\TrackHelper($trackObject);
                 }
             }
         }
-        
+
         return ($results);
     }
 }

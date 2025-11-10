@@ -11,19 +11,19 @@ class Artist extends \aportela\LastFMWrapper\ParseHelpers\ParseJSONHelper
      */
     public function parse(): array
     {
-        if (! (isset($this->json->results) && isset($this->json->results->artistmatches))) {
+        if (! (property_exists($this->json, "results") && is_object($this->json->results) && property_exists($this->json->results, "artistmatches"))) {
             throw new \aportela\LastFMWrapper\Exception\InvalidJSONException("artistmatches artist array not found");
         }
-        
+
         $results = [];
-        if (isset($this->json->results->artistmatches->artist) && is_array($this->json->results->artistmatches->artist)) {
+        if (is_object($this->json->results->artistmatches) && property_exists($this->json->results->artistmatches, "artist") && is_array($this->json->results->artistmatches->artist)) {
             foreach ($this->json->results->artistmatches->artist as $artistObject) {
                 if (is_object($artistObject)) {
                     $results[] = new \aportela\LastFMWrapper\ParseHelpers\JSON\ArtistHelper($artistObject);
                 }
             }
         }
-        
+
         return ($results);
     }
 }
