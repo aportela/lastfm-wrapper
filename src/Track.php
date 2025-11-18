@@ -10,6 +10,11 @@ class Track extends \aportela\LastFMWrapper\Entity
 
     private const string GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=%s&track=%s&api_key=%s&autocorrect=1&format=%s";
 
+    public function getHash(string $artist, string $track): string
+    {
+        return (md5("TRACK:" . mb_strtolower(mb_trim($artist)) . mb_strtolower(mb_trim($track))));
+    }
+
     /**
      * @return array<\aportela\LastFMWrapper\ParseHelpers\TrackHelper>
      */
@@ -41,7 +46,7 @@ class Track extends \aportela\LastFMWrapper\Entity
 
     public function get(string $artist, string $track): \aportela\LastFMWrapper\ParseHelpers\TrackHelper
     {
-        $cacheHash = md5("TRACK:" . mb_strtolower(mb_trim($artist)) . mb_strtolower(mb_trim($track)));
+        $cacheHash = $this->getHash($artist, $track);
         if (!$this->getCache($cacheHash)) {
             $url = sprintf(self::GET_API_URL, urlencode($artist), urlencode($track), $this->apiKey, $this->apiFormat->value);
             $responseBody = $this->httpGET($url);
