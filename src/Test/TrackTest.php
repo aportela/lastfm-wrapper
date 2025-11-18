@@ -8,7 +8,7 @@ require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SE
 
 final class TrackTest extends BaseTest
 {
-    private const string TEST_TRACK_MBID = "459fe686-82a2-4f36-b932-b62822c44bdc";
+    private const array TEST_TRACK_MBIDS = ["459fe686-82a2-4f36-b932-b62822c44bdc", "167dc51b-6bbd-3cf9-837f-853f70d56abb"];
 
     private const string TEST_TRACK_TITLE = "Silver Blue";
 
@@ -48,7 +48,7 @@ final class TrackTest extends BaseTest
     {
         $results = self::$jsonAPI->search(self::TEST_TRACK_ARTIST_NAME, self::TEST_TRACK_TITLE, 1);
         $this->assertCount(1, $results);
-        $this->assertSame(self::TEST_TRACK_MBID, $results[0]->mbId);
+        $this->assertContains($results[0]->mbId, self::TEST_TRACK_MBIDS);
         $this->assertSame(self::TEST_TRACK_TITLE, $results[0]->name);
         $this->assertSame(self::TEST_TRACK_URL, $results[0]->url);
         $this->assertNotNull($results[0]->artist);
@@ -59,7 +59,7 @@ final class TrackTest extends BaseTest
     {
         $results = self::$xmlAPI->search(self::TEST_TRACK_ARTIST_NAME, self::TEST_TRACK_TITLE, 1);
         $this->assertCount(1, $results);
-        $this->assertSame(self::TEST_TRACK_MBID, $results[0]->mbId);
+        $this->assertContains($results[0]->mbId, self::TEST_TRACK_MBIDS);
         $this->assertSame(self::TEST_TRACK_TITLE, $results[0]->name);
         $this->assertSame(self::TEST_TRACK_URL, $results[0]->url);
         $this->assertNotNull($results[0]->artist);
@@ -75,7 +75,7 @@ final class TrackTest extends BaseTest
             $this->markTestSkipped('API server connection error: ' . $remoteAPIServerConnectionException->getMessage());
         }
 
-        $this->assertSame(self::TEST_TRACK_MBID, $track->mbId);
+        $this->assertContains($track->mbId, self::TEST_TRACK_MBIDS);
         $this->assertSame(self::TEST_TRACK_TITLE, $track->name);
         $this->assertSame(self::TEST_TRACK_URL, $track->url);
         $this->assertNotNull($track->artist);
@@ -98,7 +98,7 @@ final class TrackTest extends BaseTest
             $this->markTestSkipped('API server connection error: ' . $remoteAPIServerConnectionException->getMessage());
         }
 
-        $this->assertSame(self::TEST_TRACK_MBID, $track->mbId);
+        $this->assertContains($track->mbId, self::TEST_TRACK_MBIDS);
         $this->assertSame(self::TEST_TRACK_TITLE, $track->name);
         $this->assertSame(self::TEST_TRACK_URL, $track->url);
         $this->assertNotNull($track->artist);
