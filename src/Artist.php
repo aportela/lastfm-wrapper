@@ -10,6 +10,11 @@ class Artist extends \aportela\LastFMWrapper\Entity
 
     private const string GET_API_URL = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=%s&api_key=%s&autocorrect=1&format=%s";
 
+    public function getHash(string $name): string
+    {
+        return (md5("ARTISTNAME:" . mb_strtolower(mb_trim($name))));
+    }
+
     /**
      * @return array<\aportela\LastFMWrapper\ParseHelpers\ArtistHelper>
      */
@@ -41,7 +46,7 @@ class Artist extends \aportela\LastFMWrapper\Entity
 
     public function get(string $name): \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
     {
-        $cacheHash = md5("ARTISTNAME:" . mb_strtolower(mb_trim($name)));
+        $cacheHash = $this->getHash($name);
         if (!$this->getCache($cacheHash)) {
             $url = sprintf(self::GET_API_URL, urlencode($name), $this->apiKey, $this->apiFormat->value);
             $responseBody = $this->httpGET($url);
