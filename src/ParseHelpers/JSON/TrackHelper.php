@@ -20,9 +20,9 @@ class TrackHelper extends \aportela\LastFMWrapper\ParseHelpers\TrackHelper
                     break;
                 case "string":
                     // Search Artist API (this returns artist name as string)
-                    if ((string)$object->artist !== '' && (string)$object->artist !== '0') {
+                    if ((string) $object->artist !== '' && (string) $object->artist !== '0') {
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
-                        $this->artist->name = (string)$object->artist;
+                        $this->artist->name = (string) $object->artist;
                     }
 
                     break;

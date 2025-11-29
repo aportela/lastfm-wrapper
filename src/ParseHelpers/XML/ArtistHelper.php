@@ -10,9 +10,9 @@ class ArtistHelper extends \aportela\LastFMWrapper\ParseHelpers\ArtistHelper
     {
         $children = $element->children();
         if ($children != null) {
-            $this->mbId = empty($children->mbid) ? null : (string)$children->mbid;
-            $this->name = empty($children->name) ? null : (string)$children->name;
-            $this->url = empty($children->url) ? null : (string)$children->url;
+            $this->mbId = empty($children->mbid) ? null : (string) $children->mbid;
+            $this->name = empty($children->name) ? null : (string) $children->name;
+            $this->url = empty($children->url) ? null : (string) $children->url;
 
             if (property_exists($children, 'tags') && $children->tags !== null) {
                 $tags = $children->tags->children()->tag;

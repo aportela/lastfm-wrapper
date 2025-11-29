@@ -8,12 +8,12 @@ class BaseHelper
 {
     public ?string $mbId = null;
 
-    protected function getObjectStringProperty(object $object, string $property): string|null
+    protected function getObjectStringProperty(object $object, string $property): ?string
     {
         return (property_exists($object, $property) && is_string($object->{$property}) && ($object->{$property} !== '' && $object->{$property} !== '0') ? $object->{$property} : null);
     }
 
-    protected function getObjectIntegerProperty(object $object, string $property): int|null
+    protected function getObjectIntegerProperty(object $object, string $property): ?int
     {
         return (property_exists($object, $property) && is_numeric($object->{$property}) ? intval($object->{$property}) : null);
     }

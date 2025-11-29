@@ -10,13 +10,13 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
     {
         $children = $element->children();
         if ($children != null) {
-            $this->mbId = empty($children->mbid) ? null : (string)$children->mbid;
+            $this->mbId = empty($children->mbid) ? null : (string) $children->mbid;
             // WARNING: sometimes on album object/element of API responses name property is missing and replaced by title
             // ex: track album details on getTrack API response
             if (! empty($children->name)) {
-                $this->name = (string)$children->name;
+                $this->name = (string) $children->name;
             } elseif (! empty($children->title)) {
-                $this->name = (string)$children->title;
+                $this->name = (string) $children->title;
             } else {
                 throw new \aportela\LastFMWrapper\Exception\InvalidXMLException("album name||title property not found");
             }
@@ -28,7 +28,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                     $this->artist = property_exists($children, 'artist') ? new \aportela\LastFMWrapper\ParseHelpers\XML\ArtistHelper($children->artist) : null;
                 } else {
                     // Search Artist API (this returns artist name as string)
-                    $artistName = (string)$children->artist;
+                    $artistName = (string) $children->artist;
                     if ($artistName !== '' && $artistName !== '0') {
                         $this->artist = new \aportela\LastFMWrapper\ParseHelpers\ArtistHelper();
                         $this->artist->name = $artistName;
@@ -36,7 +36,7 @@ class AlbumHelper extends \aportela\LastFMWrapper\ParseHelpers\AlbumHelper
                 }
             }
 
-            $this->url = empty($children->url) ? null : (string)$children->url;
+            $this->url = empty($children->url) ? null : (string) $children->url;
 
             if (property_exists($children, 'tags') && $children->tags !== null) {
                 $tags = $children->tags->children()->tag;

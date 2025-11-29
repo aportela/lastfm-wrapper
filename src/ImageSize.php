@@ -7,10 +7,15 @@ namespace aportela\LastFMWrapper;
 enum ImageSize: string
 {
     case NONE = "";
+
     case SMALL = "small";
+
     case MEDIUM = "medium";
+
     case LARGE = "large";
+
     case EXTRA_LARGE = "extralarge";
+
     case MEGA = "mega";
 
     public static function fromString(string $value): ImageSize
